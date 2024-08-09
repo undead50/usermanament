@@ -1,0 +1,35 @@
+/* MenuBar.css */
+
+/* Change the background color of the menu */
+.ant-menu {
+    background-color: #fff; /* Change this to your preferred background color */
+  }
+  
+  /* Change the color of the menu items */
+  .ant-menu-item, .ant-menu-submenu-title {
+    color: #d32f2f; /* Set this to your desired red color */
+  }
+  
+  /* Change the color of the selected menu item */
+  .ant-menu-item-selected {
+    background-color: #ffe0e0; /* Set this to your preferred selected background color */
+    color: #d32f2f; /* Set this to your desired red color */
+  }
+  
+  /* Change the color of the hover state */
+  .ant-menu-item:hover, .ant-menu-submenu-title:hover {
+    background-color: #fbe9e7; /* Set this to your preferred hover background color */
+    color: #d32f2f; /* Set this to your desired red color */
+  }
+  
+  /* Customize the submenu */
+  .ant-menu-submenu-popup {
+    background-color: #fff; /* Change this to your preferred submenu background color */
+  }
+  
+  .ant-menu-submenu-title {
+    color: #d32f2f; /* Set this to your desired red color */
+  }
+  
+  /* Add any additional styling needed */
+  
