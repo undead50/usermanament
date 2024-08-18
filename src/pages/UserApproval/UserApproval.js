@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Form, Input, Button, DatePicker, Select, message, Divider,Row,Col,Table } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 
@@ -8,6 +8,7 @@ const UserApprovalForm = () => {
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
   const [count, setCount] = useState(0);
+  const [accessType, setAccessType] = useState(null);
 
   const onFinish = (values) => {
     console.log('Form values:', values);
@@ -39,7 +40,7 @@ const UserApprovalForm = () => {
 
   const columns = [
     {
-      title: 'Application',
+      title: <span style={{ color: '#8F0000' }}>Application</span>,
       dataIndex: 'application',
       key: 'application',
       render: (_, { key }) => (
@@ -56,7 +57,7 @@ const UserApprovalForm = () => {
       ),
     },
     {
-      title: 'Role Type',
+      title: <span style={{ color: '#8F0000' }}>Role Type</span>,
       dataIndex: 'roleType',
       key: 'roleType',
       render: (_, { key }) => (
@@ -65,15 +66,15 @@ const UserApprovalForm = () => {
           onChange={(value) => handleFieldChange(value, key, 'roleType')}
           style={{ width: '100%' }}
         >
-          <Option value="admin">Finacle Role</Option>
-          <Option value="user">Transaction Limit</Option>
-          <Option value="user">WorkClass</Option>
+          
+          <Option value="092">Work Class</Option>
+          <Option value="093">Finacle Role</Option>
           {/* Add more options as needed */}
         </Select>
       ),
     },
     {
-      title: 'Service Type',
+      title: <span style={{ color: '#8F0000' }}>Service Type</span>,
       dataIndex: 'serviceType',
       key: 'serviceType',
       render: (_, { key }) => (
@@ -82,14 +83,16 @@ const UserApprovalForm = () => {
           onChange={(value) => handleFieldChange(value, key, 'serviceType')}
           style={{ width: '100%' }}
         >
-          <Option value="service1">Service 1</Option>
-          <Option value="service2">Service 2</Option>
+          <Option value="005">CONTRACT STAFF</Option>
+          <Option value="006">TELLER</Option>
+          <Option value="098">BRANCH MANAGER</Option>
+          <Option value="ASSTM">ASSISTANT MANAGER</Option>
           {/* Add more options as needed */}
         </Select>
       ),
     },
     {
-      title: 'Request Type',
+      title: <span style={{ color: '#8F0000' }}>Request Type</span>,
       dataIndex: 'requestType',
       key: 'requestType',
       render: (_, { key }) => (
@@ -105,7 +108,7 @@ const UserApprovalForm = () => {
       ),
     },
     {
-      title: 'Action',
+      title: <span style={{ color: '#8F0000' }}>Action</span>,
       key: 'action',
       render: (_, { key }) => (
         <Button onClick={() => handleDelete(key)} type="link" danger>
@@ -115,12 +118,19 @@ const UserApprovalForm = () => {
     },
   ];
 
+  useEffect(() => {
+    if (accessType !== 'Temporary') {
+      form.resetFields(['fromDate', 'toDate']);
+    }
+  }, [accessType, form]);
+
   return (
     <>
     <Card
-        title={<div style={{ textAlign: 'center', fontSize: '20px' }}>User Approval System</div>}
+        title={<div style={{ textAlign: 'center', fontSize: '20px',color:'#8F0000' }}>User Approval System</div>}
       />
-    <Card title="Employee Details">
+    <br/>  
+    <Card title={<span style={{ color: '#8F0000' }}>Employee Details</span>} >
       {/* Employee Details Section */}
       <Form
         form={form}
@@ -198,7 +208,8 @@ const UserApprovalForm = () => {
         </Form.Item> */}
       </Form>
     </Card>
-    <Card title="Request Application Role">
+    <br/>
+    <Card title={<span style={{ color: '#8F0000' }}>Request Application Role</span>}>
     <Row> 
     <Form.Item
           name="accessType"
@@ -208,14 +219,37 @@ const UserApprovalForm = () => {
     <Select
           placeholder="Access Type"
           style={{ width: '100%' }}
+          onChange={setAccessType}
         >
-          <Option value="type1">Temporary</Option>
-          <Option value="type2">Permanent</Option>
+          <Option value="Temporary">Temporary</Option>
+          <Option value="Permanent">Permanent</Option>
           {/* Add more options as needed */}
         </Select>
         </Form.Item>
         </Row>
-        <br/>    
+        <br/> 
+        {accessType === 'Temporary' && (
+          <Row gutter={16}>
+            <Col span={6}>
+              <Form.Item
+                name="fromDate"
+                label="From Date"
+                rules={[{ required: true, message: 'Please select From Date' }]}
+              >
+                <DatePicker style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item
+                name="toDate"
+                label="To Date"
+                rules={[{ required: true, message: 'Please select To Date' }]}
+              >
+                <DatePicker style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+          </Row>
+        )}   
         <Button
           type="primary"
           onClick={handleAdd}
@@ -232,7 +266,8 @@ const UserApprovalForm = () => {
 
 
       </Card>
-      <Card title="Recomender Details">
+      <br/>
+      <Card title={<span style={{ color: '#8F0000' }}>Recomender Details</span>}>
       <Row>
         <Col span={6}>
       <Form.Item
@@ -292,9 +327,18 @@ const UserApprovalForm = () => {
         </Col>
         </Row>
       </Card>
-      <Card title={"Remarks"}>
+      <br/>
+      <Card title={<span style={{ color: '#8F0000' }}>Remarks</span>}>
        <TextArea></TextArea>
       </Card>
+      <br/>
+      <div>
+      <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>  
+      </div>
       </>
   );
 };

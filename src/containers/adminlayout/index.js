@@ -116,7 +116,7 @@ const AdminLayout = () => {
         style={{
           display: 'flex',
           alignItems: 'center',
-          backgroundColor:"#ba131a"
+          backgroundColor:"#8F0000"
         }}
       >
         <div className="demo-logo">

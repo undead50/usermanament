@@ -50,7 +50,7 @@ const items = [
     children: [
       {
         key: '5',
-        label: 'Option 5',
+        label: 'Branch',
       },
       {
         key: '6',
@@ -93,7 +93,7 @@ function MenuBar() {
       onClick={handleClick}
       style={{
         width: 1000,
-        backgroundColor: '#ba131a', // Red background
+        backgroundColor: '#8F0000', // Red background
         color: 'white', // White text color
       }}
       selectedKeys={[selectedKey]}

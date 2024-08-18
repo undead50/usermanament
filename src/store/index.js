@@ -12,7 +12,12 @@ import {
   createTransform,
 } from 'redux-persist';
 
+// import { login, logout, FlushUserData, authReducer } from './slices/authSlice';
+import { setUser, userReducer } from './slices/userSlice';
+import { branchReducer } from './slices/branchSlice';
+
 import { enc, AES } from 'crypto-js';
+
 
 const secretKey = '081fbadce74f99af29c8280fce633fb9';
 
@@ -26,27 +31,22 @@ const encryptor = createTransform(
   (inboundState, key) => encrypt(inboundState), // Encrypt the inbound state
   (outboundState, key) => decrypt(outboundState) // Decrypt the outbound state
 );
-
-const rootReducer = combineReducers({});
-
+const rootReducer = combineReducers({
+  // auth:authReducer,
+  user:userReducer,
+  branch:branchReducer,
+});
 const persistConfig = {
-  key: 'root_riskassessment',
+  key: 'root_user_approval',
   storage,
   transforms: [encryptor], // Use the encryptTransform directly
   whitelist: [
+    'branch',
     'auth',
-    'user',
-    'category',
-    'question',
-    'privilege',
-    'risk',
-    'mark',
-    'report',
-    'mydashboard',
-    'dashboard',
-    'riskdetail',
+    'user'
   ],
 };
+
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

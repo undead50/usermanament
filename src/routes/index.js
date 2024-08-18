@@ -6,6 +6,7 @@ import Login from '../pages/Auth';
 import SwiftMessage from '../pages/Swift';
 import CameraComponent from '../pages/Test/Camera';
 import UserApprovalForm from '../pages/UserApproval/UserApproval';
+import BranchTable from '../pages/Branch';
 
 function MyRoutes() {
   return (
@@ -16,8 +17,9 @@ function MyRoutes() {
           <Route path='/' element={<UserApprovalForm/>}/>
           {/* <Route path="/" element={<Dashboard />} /> */}
           <Route path="/create-report" element={<CreateReport />} />
-          <Route path="/initiate-swift" element={<SwiftMessage />} />
-          <Route path="/camera" element={<CameraComponent/>}/>
+          {/* <Route path="/initiate-swift" element={<SwiftMessage />} />
+          <Route path="/camera" element={<CameraComponent/>}/> */}
+          <Route path="/branch" element={<BranchTable/>}/>
 
         </Route>
       </Routes>
