@@ -17,7 +17,7 @@ const items = [
         type: 'group',
         children: [
           {
-            key: '1',
+            key: '',
             label: 'Option 1',
           },
           {
@@ -49,8 +49,9 @@ const items = [
     icon: <AppstoreOutlined />,
     children: [
       {
-        key: '5',
+        key: '/branch',
         label: 'Branch',
+        url: '/branch',
       },
       {
         key: '6',

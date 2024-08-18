@@ -22,9 +22,9 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Modify the request config before sending the request
     // For example, you can add headers or authentication tokens
-    config.headers['Authorization'] = `${
-      store.getState().auth.data.token
-      }`;
+    // config.headers['Authorization'] = `${
+    //   store.getState().auth.data.token
+    //   }`;
     if (config.data instanceof FormData) {
       config.headers['Content-Type'] = 'multipart/form-data';
       config.headers['Accept'] = '*/*'

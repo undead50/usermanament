@@ -17,7 +17,6 @@ export const postLoginData = createAsyncThunk('auth/postLoginData', async (data)
   let encodedString = btoa(`${data.username}:${data.password}`);
   try {
     const url = BACKEND_URL + '/post-login';
-    alert(url)
     const config = {
       method: 'get',
       url: url,
