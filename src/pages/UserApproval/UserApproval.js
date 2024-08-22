@@ -1,16 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector,useDispatch } from 'react-redux';
-import { Card, Form, Input, Button, DatePicker, Select, message, Divider,Row,Col,Table } from 'antd';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  Card,
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Select,
+  message,
+  Divider,
+  Row,
+  Col,
+  Table,
+} from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { fetchApplicationsAsync } from '../../store/slices/applicationSlice';
-import {fetchRolesDropDownAsync, resetStateRole} from '../../store/slices/roleSlice';
-import { fetchServicesDropDownAsync, resetStateService } from '../../store/slices/serviceSlice';
-import { fetchRequestDropDownAsync, fetchRequestsAsync, resetStateRequest } from '../../store/slices/requestSlice';
 import {
-  MinusCircleOutlined
-} from '@ant-design/icons';
+  fetchRolesDropDownAsync,
+  resetStateRole,
+} from '../../store/slices/roleSlice';
+import {
+  fetchServicesDropDownAsync,
+  resetStateService,
+} from '../../store/slices/serviceSlice';
+import {
+  fetchRequestDropDownAsync,
+  fetchRequestsAsync,
+  resetStateRequest,
+} from '../../store/slices/requestSlice';
+import { MinusCircleOutlined } from '@ant-design/icons';
 import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
-
 
 const { Option } = Select;
 
@@ -20,66 +39,66 @@ const UserApprovalForm = () => {
   const [count, setCount] = useState(0);
   const [accessType, setAccessType] = useState(null);
 
-
-  const { branchs,branch_loading,branch_error} = useSelector((state)=>
-   state.branch)
+  const { branchs, branch_loading, branch_error } = useSelector(
+    (state) => state.branch
+  );
 
   const { applications, loading, error } = useSelector(
     (state) => state.application
   );
 
-  const { requests } = useSelector(
-    (state) => state.request
-  );
+  const { requests } = useSelector((state) => state.request);
 
   const [selectedApplication, setSelectedApplication] = useState(null);
 
-  const [selectedRole,setSelectedRole] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(null);
 
-  const [roleDisable,setRoleDisable] = useState(false)
+  const [roleDisable, setRoleDisable] = useState(false);
 
-  const [serviceDisable,setServiceDisable] = useState(false)
+  const [serviceDisable, setServiceDisable] = useState(false);
 
-  const [requestDisable,setRequestDisable] = useState(false)
+  const [requestDisable, setRequestDisable] = useState(false);
 
-  const {service_dropdown,service_dropdown_loading} = useSelector((state)=>state.service)
+  const { service_dropdown, service_dropdown_loading } = useSelector(
+    (state) => state.service
+  );
 
-  const {roles_dropdown,roles_dropdown_loading} = useSelector((state)=>state.role);
+  const { roles_dropdown, roles_dropdown_loading } = useSelector(
+    (state) => state.role
+  );
 
-  const {requests_dropdown} = useSelector((state)=>state.request)
+  const { requests_dropdown } = useSelector((state) => state.request);
 
-  const {employees,employee_loading,employee_error} = useSelector((state)=>state.employee)
-
-
- 
+  const { employees, employee_loading, employee_error } = useSelector(
+    (state) => state.employee
+  );
 
   const dispatch = useDispatch();
 
-  useEffect(()=>{
-  dispatch(fetchApplicationsAsync());
-  dispatch(fetchRequestsAsync());
-  dispatch(fetchEmployeesAsync());
-  },[])
+  useEffect(() => {
+    dispatch(fetchApplicationsAsync());
+    dispatch(fetchRequestsAsync());
+    dispatch(fetchEmployeesAsync());
+  }, []);
 
   useEffect(() => {
     if (selectedRole) {
       const role = {
-        id:selectedRole
-      }
+        id: selectedRole,
+      };
       dispatch(fetchServicesDropDownAsync(role)); // Fetch roles based on selected application
     }
-  }, [selectedRole, dispatch,form]);
+  }, [selectedRole, dispatch, form]);
 
   useEffect(() => {
     if (selectedApplication) {
       const application = {
-        id:selectedApplication
-      }
+        id: selectedApplication,
+      };
       dispatch(fetchRequestDropDownAsync(application));
       dispatch(fetchRolesDropDownAsync(application)); // Fetch roles based on selected application
     }
   }, [selectedApplication, dispatch]);
-
 
   const onFinish = (values) => {
     console.log('Form values:', values);
@@ -105,27 +124,27 @@ const UserApprovalForm = () => {
   const handleFieldChange = (value, key, field) => {
     const newData = dataSource.map((item) => {
       if (item.key === key) {
-        if (field === 'application'){
+        if (field === 'application') {
           // resetStateRole()
           // resetStateRequest()
-          resetStateService()
-          setRoleDisable(false)
-          setServiceDisable(false)
-          setRequestDisable(false)
-          return { ...item, [field]: value,roleType:'' ,serviceType: '' };
+          resetStateService();
+          setRoleDisable(false);
+          setServiceDisable(false);
+          setRequestDisable(false);
+          return { ...item, [field]: value, roleType: '', serviceType: '' };
         }
         if (field === 'roleType') {
-          setRequestDisable(true)
-          return { ...item, [field]: value, serviceType: '',requestType:'' }; // Clear serviceType when roleType is changed
+          setRequestDisable(true);
+          return { ...item, [field]: value, serviceType: '', requestType: '' }; // Clear serviceType when roleType is changed
         }
-        if (field === 'serviceType'){
-          setRequestDisable(true)
-          return { ...item, [field]: value,requestType:'' }
+        if (field === 'serviceType') {
+          setRequestDisable(true);
+          return { ...item, [field]: value, requestType: '' };
         }
-        if (field === 'requestType'){
-          setRoleDisable(true)
-          setServiceDisable(true)
-          return { ...item, [field]: value,roleType:'' ,serviceType: '' }
+        if (field === 'requestType') {
+          setRoleDisable(true);
+          setServiceDisable(true);
+          return { ...item, [field]: value, roleType: '', serviceType: '' };
         }
         return { ...item, [field]: value };
       }
@@ -149,11 +168,11 @@ const UserApprovalForm = () => {
           }}
           style={{ width: '100%' }}
         >
-          {applications.map(app => (
-                <Select.Option key={app.id} value={app.id}>
-                  {app.applicationName}
-                </Select.Option>
-              ))}
+          {applications.map((app) => (
+            <Select.Option key={app.id} value={app.id}>
+              {app.applicationName}
+            </Select.Option>
+          ))}
           {/* Add more options as needed */}
         </Select>
       ),
@@ -162,21 +181,23 @@ const UserApprovalForm = () => {
       title: <span style={{ color: '#8F0000' }}>Role Type</span>,
       dataIndex: 'roleType',
       key: 'roleType',
-      render: (_, { key,roleType }) => (
+      render: (_, { key, roleType }) => (
         <Select
           value={roleType}
           disabled={roleDisable}
           placeholder="Select Role Type"
-          onChange={(value) => {handleFieldChange(value, key, 'roleType');
-            setSelectedRole(value);} // Update selected application
+          onChange={
+            (value) => {
+              handleFieldChange(value, key, 'roleType');
+              setSelectedRole(value);
+            } // Update selected application
           }
           style={{ width: '100%' }}
         >
-          
           {/* <Option value="092">Work Class</Option>
           <Option value="093">Finacle Role</Option> */}
           {/* Add more options as needed */}
-          {roles_dropdown.map(role => (
+          {roles_dropdown.map((role) => (
             <Option key={role.id} value={role.id}>
               {role.role}
             </Option>
@@ -188,16 +209,17 @@ const UserApprovalForm = () => {
       title: <span style={{ color: '#8F0000' }}>Service Type</span>,
       dataIndex: 'serviceType',
       key: 'serviceType',
-      render: (_, { key,serviceType }) => (
+      render: (_, { key, serviceType }) => (
         <Select
           placeholder="Select Service Type"
           disabled={serviceDisable}
-          onChange={(value) => {       
-          handleFieldChange(value, key, 'serviceType');}}
+          onChange={(value) => {
+            handleFieldChange(value, key, 'serviceType');
+          }}
           value={serviceType}
           style={{ width: '100%' }}
         >
-           {service_dropdown.map(service => (
+          {service_dropdown.map((service) => (
             <Option key={service.service_code} value={service.service_code}>
               {service.service}
             </Option>
@@ -210,7 +232,7 @@ const UserApprovalForm = () => {
       title: <span style={{ color: '#8F0000' }}>Request Type</span>,
       dataIndex: 'requestType',
       key: 'requestType',
-      render: (_, { key,requestType }) => (
+      render: (_, { key, requestType }) => (
         <Select
           value={requestType}
           disabled={requestDisable}
@@ -218,7 +240,7 @@ const UserApprovalForm = () => {
           onChange={(value) => handleFieldChange(value, key, 'requestType')}
           style={{ width: '100%' }}
         >
-          {requests_dropdown.map(request => (
+          {requests_dropdown.map((request) => (
             <Option key={request.id} value={request.id}>
               {request.requestType}
             </Option>
@@ -232,18 +254,19 @@ const UserApprovalForm = () => {
       key: 'action',
       render: (_, { key }) => (
         <Button onClick={() => handleDelete(key)} type="link" danger>
-          <MinusCircleOutlined />  (Delete) 
+          <MinusCircleOutlined /> (Delete)
         </Button>
       ),
     },
   ];
 
-
-// Function to format the option label
-const getOptionLabel = (employee, branchs) => {
-  const branch = branchs.find(b => b.solId === employee.branch);
-  return `${employee.name} - ${branch ? branch.solDescription : 'Unknown Branch'} - ${employee.email}`;
-};
+  // Function to format the option label
+  const getOptionLabel = (employee, branchs) => {
+    const branch = branchs.find((b) => b.solId === employee.branch);
+    return `${employee.name} - ${
+      branch ? branch.solDescription : 'Unknown Branch'
+    } - ${employee.email}`;
+  };
   useEffect(() => {
     if (accessType !== 'Temporary') {
       form.resetFields(['fromDate', 'toDate']);
@@ -251,109 +274,172 @@ const getOptionLabel = (employee, branchs) => {
   }, [accessType, form]);
 
   return (
-    <>
-    <Card
-        title={<div style={{ textAlign: 'center', fontSize: '20px',color:'#8F0000' }}>User Approval System</div>}
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        padding: '30px',
+        backgroundColor: '#FFFFE0',
+      }}
+    >
+      <Card
+        title={
+          <div
+            style={{ textAlign: 'center', fontSize: '20px', color: '#8F0000' }}
+          >
+            User Approval System
+          </div>
+        }
       />
-    <br/>  
-    <Card title={<span style={{ color: '#8F0000' }}>Employee Details</span>} >
-      {/* Employee Details Section */}
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFinish}
-      >
-        {/* <Divider orientation="left">Employee Details</Divider> */}
-        <Row>  
-          <Col span={6}>      
-          <Form.Item
-          name="employeeId"
-          label="Employee ID"
-          rules={[{ required: true, message: 'Please enter Employee ID' }]}
-        >
-          <Input placeholder="Enter Employee ID" />
-        </Form.Item>
-        </Col>
-        <Col span={2}/>
-        <Col span={6}>
-        <Form.Item
-          name="employeeSolId"
-          label="Employee SOL ID"
-          rules={[{ required: true, message: 'Please enter Employee SOL ID' }]}
-        >
-          <Input placeholder="Enter Employee SOL ID" />
-        </Form.Item>
-        </Col>
-        </Row>
-        <Row>
-          <Col span={6}>
-        <Form.Item
-          name="employeeName"
-          label="Employee Name"
-          rules={[{ required: true, message: 'Please enter Employee Name' }]}
-        >
-          <Input placeholder="Enter Employee Name" />
-        </Form.Item>
-        </Col>
-        <Col span={2}/>
-        <Col span={6}>
-        <Form.Item
-          name="employeeEmail"
-          label="Employee Email"
-          rules={[{ required: true, message: 'Please enter Employee Email' }, { type: 'email', message: 'Please enter a valid email' }]}
-        >
-          <Input placeholder="Enter Employee Email" />
-        </Form.Item>
-        </Col>
-        </Row>
-        <Row>
-          <Col span={6}>
-        <Form.Item
-          name="employeeBranch"
-          label="Employee Branch"
-          rules={[{ required: true, message: 'Please enter Employee Branch' }]}
-        >
-          <Input placeholder="Enter Employee Branch" />
-        </Form.Item>
-        </Col>
-        <Col span={2}/>
-        <Col span={6}>
-        <Form.Item
-          name="finacleId"
-          label="Finacle ID"
-          rules={[{ required: true, message: 'Please enter Finacle ID' }]}
-        >
-          <Input placeholder="Enter Finacle ID" />
-        </Form.Item>
-        </Col>
-        </Row>
-        {/* <Form.Item>
+      <br />
+      <Card title={<span style={{ color: '#8F0000' }}>Employee Details</span>}>
+        {/* Employee Details Section */}
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          {/* <Divider orientation="left">Employee Details</Divider> */}
+          <Row>
+            <Col span={6}>
+              <Form.Item
+                name="employeeId"
+                label="Employee ID"
+                rules={[
+                  { required: true, message: 'Please enter Employee ID' },
+                ]}
+              >
+                <Input placeholder="Enter Employee ID" />
+              </Form.Item>
+            </Col>
+            <Col span={2} />
+            <Col span={6}>
+              <Form.Item
+                name="employeeSolId"
+                label="Employee SOL ID"
+                rules={[
+                  { required: true, message: 'Please enter Employee SOL ID' },
+                ]}
+              >
+                <Input placeholder="Enter Employee SOL ID" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={6}>
+              <Form.Item
+                name="employeeName"
+                label="Employee Name"
+                rules={[
+                  { required: true, message: 'Please enter Employee Name' },
+                ]}
+              >
+                <Select
+                  placeholder="Select an employee"
+                  style={{ width: '100%' }}
+                  allowClear
+                  showSearch
+                  filterOption={(input, option) => {
+                    const fullLabel = option.props['data-label'].toLowerCase();
+                    return fullLabel.includes(input.toLowerCase());
+                  }}
+                  optionLabelProp="label" // Use the email as the label when an option is selected
+                >
+                  {employees.map((emp) => {
+                    const optionLabel = `${emp.name} - ${
+                      branchs.find((b) => b.solId === emp.branch)
+                        ?.solDescription || 'Unknown Branch'
+                    } - ${emp.email}`;
+                    return (
+                      <Option
+                        key={emp.id}
+                        value={emp.email} // Store the email as the selected value
+                        label={emp.email} // Display email when selected
+                        data-label={optionLabel} // For filtering purposes
+                      >
+                        <div>
+                          <strong>{emp.name}</strong>
+                          <br />
+                          <span style={{ color: '#888' }}>
+                            {branchs.find((b) => b.solId === emp.branch)
+                              ?.solDescription || 'Unknown Branch'}
+                          </span>
+                          <br />
+                          <span style={{ color: '#555' }}>{emp.email}</span>
+                        </div>
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={2} />
+            <Col span={6}>
+              <Form.Item
+                name="employeeEmail"
+                label="Employee Email"
+                rules={[
+                  { required: true, message: 'Please enter Employee Email' },
+                  { type: 'email', message: 'Please enter a valid email' },
+                ]}
+              >
+                <Input placeholder="Enter Employee Email" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={6}>
+              <Form.Item
+                name="employeeBranch"
+                label="Employee Branch"
+                rules={[
+                  { required: true, message: 'Please enter Employee Branch' },
+                ]}
+              >
+                <Input placeholder="Enter Employee Branch" />
+              </Form.Item>
+            </Col>
+            <Col span={2} />
+            <Col span={6}>
+              <Form.Item
+                name="finacleId"
+                label="Finacle ID"
+                rules={[{ required: true, message: 'Please enter Finacle ID' }]}
+              >
+                <Input placeholder="Enter Finacle ID" />
+              </Form.Item>
+            </Col>
+          </Row>
+          {/* <Form.Item>
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
         </Form.Item> */}
-      </Form>
-    </Card>
-    <br/>
-    <Card title={<span style={{ color: '#8F0000' }}>Request Application Role</span>}>
-    <Row> 
-    <Form.Item
-          name="accessType"
-          label="Access Type"
-          rules={[{ required: true, message: 'Please enter Access Type' }]}
-        >   
-    <Select
-          placeholder="Access Type"
-          style={{ width: '100%' }}
-          onChange={setAccessType}
-        >
-          <Option value="Temporary">Temporary</Option>
-          <Option value="Permanent">Permanent</Option>
-          {/* Add more options as needed */}
-        </Select>
-        </Form.Item>
+        </Form>
+      </Card>
+      <br />
+      <Card
+        title={
+          <span style={{ color: '#8F0000' }}>Request Application Role</span>
+        }
+      >
+        <Row>
+          <Col span={6}>
+            <Form.Item
+              name="accessType"
+              label="Access Type"
+              rules={[{ required: true, message: 'Please enter Access Type' }]}
+            >
+              <Select
+                placeholder="Access Type"
+                style={{ width: '100%' }}
+                onChange={setAccessType}
+              >
+                <Option value="Temporary">Temporary</Option>
+                <Option value="Permanent">Permanent</Option>
+                {/* Add more options as needed */}
+              </Select>
+            </Form.Item>
+          </Col>
         </Row>
-        <br/> 
+        <br />
         {accessType === 'Temporary' && (
           <Row gutter={16}>
             <Col span={6}>
@@ -375,113 +461,127 @@ const getOptionLabel = (employee, branchs) => {
               </Form.Item>
             </Col>
           </Row>
-        )}   
-        <Button
-          type="primary"
-          onClick={handleAdd}
-          style={{ marginBottom: 16 }}
-        >
-          Add Role
-        </Button>
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          pagination={false}
-          bordered
-        />
-
-
+        )}
+        {accessType && (
+          <>
+            <Button
+              type="primary"
+              onClick={handleAdd}
+              style={{ marginBottom: 16 }}
+            >
+              Add Role
+            </Button>
+            <Table
+              columns={columns}
+              dataSource={dataSource}
+              pagination={false}
+              bordered
+            />
+          </>
+        )}
       </Card>
-      <br/>
-      <Card title={<span style={{ color: '#8F0000' }}>Recomender Details</span>}>
-      <Row>
-        <Col span={6}>
-        <Form.Item
-        name="Name"
-        label="Name"
-        rules={[{ required: true, message: 'Please select a recommender' }]}
+      <br />
+      <Card
+        title={<span style={{ color: '#8F0000' }}>Recomender Details</span>}
       >
-  <Select
-    placeholder="Select an employee"
-    style={{ width: '100%' }}
-    allowClear
-    showSearch
-    filterOption={(input, option) => {
-      // Access the formatted label used in the option
-      const fullLabel = option.props['data-label'].toLowerCase();
-      // Perform the case-insensitive comparison
-      return fullLabel.includes(input.toLowerCase());
-    }}
-  >
-    {employees.map(emp => {
-      const optionLabel = getOptionLabel(emp, branchs);
-      return (
-        <Option key={emp.id} value={emp.email} data-label={optionLabel} labelRender={emp.email}>
-              <div>
-                <strong>{emp.name}</strong><br />
-                <span style={{ color: '#888' }}>{branchs.find(b => b.solId === emp.branch)?.solDescription || 'Unknown Branch'}</span><br />
-                <span style={{ color: '#555' }}>{emp.email}</span>
-              </div>
-            </Option>
-      );
-    })}
-  </Select>
-</Form.Item>
-        </Col>
-        <Col span={3}/>
-        <Col span={6}>
-        <Form.Item
-          name="EmployeeId"
-          label="EmployeeId"
-          rules={[{ required: true, message: 'Please enter EmployeeId Detail' }]}
-        >
-           
-           <Input placeholder="Enter Employee ID" />
-        
-        </Form.Item>
-        
-        </Col>
-        </Row>   
         <Row>
-        <Col span={6}>
-      <Form.Item
-          name="Title"
-          label="Title"
-          rules={[{ required: true, message: 'Please enter Title' }]}
-        >
-           
-           <Input placeholder="Title" />
-        
-        </Form.Item>
-        </Col>
-        <Col span={3}/>
-        <Col span={6}>
-        <Form.Item
-          name="Department"
-          label="Department"
-          rules={[{ required: true, message: 'Please enter Department Detail' }]}
-        >
-           
-           <Input placeholder="Enter Department ID" />
-        
-        </Form.Item>
-        
-        </Col>
+          <Col span={6}>
+            <Form.Item
+              name="Name"
+              label="Name"
+              rules={[
+                { required: true, message: 'Please select a recommender' },
+              ]}
+            >
+              <Select
+                placeholder="Select an employee"
+                style={{ width: '100%' }}
+                allowClear
+                showSearch
+                filterOption={(input, option) => {
+                  const fullLabel = option.props['data-label'].toLowerCase();
+                  return fullLabel.includes(input.toLowerCase());
+                }}
+                optionLabelProp="label" // Use the email as the label when an option is selected
+              >
+                {employees.map((emp) => {
+                  const optionLabel = `${emp.name} - ${
+                    branchs.find((b) => b.solId === emp.branch)
+                      ?.solDescription || 'Unknown Branch'
+                  } - ${emp.email}`;
+                  return (
+                    <Option
+                      key={emp.id}
+                      value={emp.email} // Store the email as the selected value
+                      label={emp.email} // Display email when selected
+                      data-label={optionLabel} // For filtering purposes
+                    >
+                      <div>
+                        <strong>{emp.name}</strong>
+                        <br />
+                        <span style={{ color: '#888' }}>
+                          {branchs.find((b) => b.solId === emp.branch)
+                            ?.solDescription || 'Unknown Branch'}
+                        </span>
+                        <br />
+                        <span style={{ color: '#555' }}>{emp.email}</span>
+                      </div>
+                    </Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={3} />
+          <Col span={6}>
+            <Form.Item
+              name="EmployeeId"
+              label="EmployeeId"
+              rules={[
+                { required: true, message: 'Please enter EmployeeId Detail' },
+              ]}
+            >
+              <Input placeholder="Enter Employee ID" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={6}>
+            <Form.Item
+              name="Title"
+              label="Title"
+              rules={[{ required: true, message: 'Please enter Title' }]}
+            >
+              <Input placeholder="Title" />
+            </Form.Item>
+          </Col>
+          <Col span={3} />
+          <Col span={6}>
+            <Form.Item
+              name="Department"
+              label="Department"
+              rules={[
+                { required: true, message: 'Please enter Department Detail' },
+              ]}
+            >
+              <Input placeholder="Enter Department ID" />
+            </Form.Item>
+          </Col>
         </Row>
       </Card>
-      <br/>
+      <br />
       <Card title={<span style={{ color: '#8F0000' }}>Remarks</span>}>
-       <TextArea></TextArea>
+        <TextArea></TextArea>
       </Card>
-      <br/>
+      <br />
       <div>
-      <Form.Item>
+        <Form.Item>
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
-        </Form.Item>  
+        </Form.Item>
       </div>
-      </>
+    </div>
   );
 };
 

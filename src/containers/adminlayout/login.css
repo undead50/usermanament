@@ -1,0 +1,9 @@
+.blur-background .ant-modal-content {
+  backdrop-filter: blur(200px); /* Increase the blur level here */
+  background-color: rgba(255, 255, 255, 9.1); /* Adjust the opacity as needed */
+}
+
+.blur-background .ant-modal-mask {
+  backdrop-filter: blur(200px); /* Apply the increased blur to the mask */
+  background-color: rgba(200, 255, 0, 9.0); /* Semi-transparent black background */
+}
