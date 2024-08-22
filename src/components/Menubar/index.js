@@ -54,20 +54,29 @@ const items = [
         url: '/branch',
       },
       {
-        key: '6',
-        label: 'Option 6',
+        key: '/employee',
+        label: 'Users',
       },
+      
       {
         key: 'sub3',
-        label: 'Submenu',
+        label: 'Application',
         children: [
           {
-            key: '7',
-            label: 'Option 7',
+            key: '/application',
+            label: 'Application',
           },
           {
-            key: '8',
-            label: 'Option 8',
+            key: '/request',
+            label: 'RequestType',
+          },
+          {
+            key: '/role',
+            label: 'Role',
+          },
+          {
+            key: '/service',
+            label: 'Service',
           },
         ],
       },

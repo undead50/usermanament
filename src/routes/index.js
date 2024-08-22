@@ -3,10 +3,14 @@ import AdminLayout from '../containers/adminlayout';
 import Dashboard from '../pages/Dashboard';
 import CreateReport from '../pages/Report';
 import Login from '../pages/Auth';
-import SwiftMessage from '../pages/Swift';
-import CameraComponent from '../pages/Test/Camera';
+
 import UserApprovalForm from '../pages/UserApproval/UserApproval';
 import BranchTable from '../pages/Branch';
+import EmployeeTable from '../pages/Employee';
+import ApplicationTable from '../pages/Application';
+import RequestTable from '../pages/Request';
+import RoleTable from '../pages/Role';
+import ServiceTable from '../pages/Service';
 
 function MyRoutes() {
   return (
@@ -20,6 +24,11 @@ function MyRoutes() {
           {/* <Route path="/initiate-swift" element={<SwiftMessage />} />
           <Route path="/camera" element={<CameraComponent/>}/> */}
           <Route path="/branch" element={<BranchTable/>}/>
+          <Route path="/employee" element={<EmployeeTable/>}/>
+          <Route path="/application" element={<ApplicationTable/>}/>
+          <Route path="/request" element={<RequestTable/>}/>
+          <Route path="/role" element={<RoleTable/>}/>
+          <Route path="/service" element={<ServiceTable/>}/>
 
         </Route>
       </Routes>

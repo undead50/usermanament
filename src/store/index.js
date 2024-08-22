@@ -17,6 +17,11 @@ import { setUser, userReducer } from './slices/userSlice';
 import { branchReducer } from './slices/branchSlice';
 
 import { enc, AES } from 'crypto-js';
+import { employeeReducer } from './slices/employeeSlice';
+import { applicationReducer } from './slices/applicationSlice';
+import { requestReducer } from './slices/requestSlice';
+import { roleReducer } from './slices/roleSlice';
+import { serviceReducer } from './slices/serviceSlice';
 
 
 const secretKey = '081fbadce74f99af29c8280fce633fb9';
@@ -33,6 +38,11 @@ const encryptor = createTransform(
 );
 const rootReducer = combineReducers({
   // auth:authReducer,
+  service:serviceReducer,
+  role:roleReducer,
+  request:requestReducer,
+  application:applicationReducer,
+  employee:employeeReducer,
   user:userReducer,
   branch:branchReducer,
 });

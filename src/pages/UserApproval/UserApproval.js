@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector,useDispatch } from 'react-redux';
 import { Card, Form, Input, Button, DatePicker, Select, message, Divider,Row,Col,Table } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
+import { fetchApplicationsAsync } from '../../store/slices/applicationSlice';
+import {fetchRolesDropDownAsync, resetStateRole} from '../../store/slices/roleSlice';
+import { fetchServicesDropDownAsync, resetStateService } from '../../store/slices/serviceSlice';
+import { fetchRequestDropDownAsync, fetchRequestsAsync, resetStateRequest } from '../../store/slices/requestSlice';
+import {
+  MinusCircleOutlined
+} from '@ant-design/icons';
+import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
+
 
 const { Option } = Select;
 
@@ -9,6 +19,67 @@ const UserApprovalForm = () => {
   const [dataSource, setDataSource] = useState([]);
   const [count, setCount] = useState(0);
   const [accessType, setAccessType] = useState(null);
+
+
+  const { branchs,branch_loading,branch_error} = useSelector((state)=>
+   state.branch)
+
+  const { applications, loading, error } = useSelector(
+    (state) => state.application
+  );
+
+  const { requests } = useSelector(
+    (state) => state.request
+  );
+
+  const [selectedApplication, setSelectedApplication] = useState(null);
+
+  const [selectedRole,setSelectedRole] = useState(null);
+
+  const [roleDisable,setRoleDisable] = useState(false)
+
+  const [serviceDisable,setServiceDisable] = useState(false)
+
+  const [requestDisable,setRequestDisable] = useState(false)
+
+  const {service_dropdown,service_dropdown_loading} = useSelector((state)=>state.service)
+
+  const {roles_dropdown,roles_dropdown_loading} = useSelector((state)=>state.role);
+
+  const {requests_dropdown} = useSelector((state)=>state.request)
+
+  const {employees,employee_loading,employee_error} = useSelector((state)=>state.employee)
+
+
+ 
+
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+  dispatch(fetchApplicationsAsync());
+  dispatch(fetchRequestsAsync());
+  dispatch(fetchEmployeesAsync());
+  },[])
+
+  useEffect(() => {
+    if (selectedRole) {
+      const role = {
+        id:selectedRole
+      }
+      dispatch(fetchServicesDropDownAsync(role)); // Fetch roles based on selected application
+    }
+  }, [selectedRole, dispatch,form]);
+
+  useEffect(() => {
+    if (selectedApplication) {
+      const application = {
+        id:selectedApplication
+      }
+      dispatch(fetchRequestDropDownAsync(application));
+      dispatch(fetchRolesDropDownAsync(application)); // Fetch roles based on selected application
+    }
+  }, [selectedApplication, dispatch]);
+
 
   const onFinish = (values) => {
     console.log('Form values:', values);
@@ -32,10 +103,36 @@ const UserApprovalForm = () => {
   };
 
   const handleFieldChange = (value, key, field) => {
-    const newData = dataSource.map((item) => 
-      item.key === key ? { ...item, [field]: value } : item
-    );
+    const newData = dataSource.map((item) => {
+      if (item.key === key) {
+        if (field === 'application'){
+          // resetStateRole()
+          // resetStateRequest()
+          resetStateService()
+          setRoleDisable(false)
+          setServiceDisable(false)
+          setRequestDisable(false)
+          return { ...item, [field]: value,roleType:'' ,serviceType: '' };
+        }
+        if (field === 'roleType') {
+          setRequestDisable(true)
+          return { ...item, [field]: value, serviceType: '',requestType:'' }; // Clear serviceType when roleType is changed
+        }
+        if (field === 'serviceType'){
+          setRequestDisable(true)
+          return { ...item, [field]: value,requestType:'' }
+        }
+        if (field === 'requestType'){
+          setRoleDisable(true)
+          setServiceDisable(true)
+          return { ...item, [field]: value,roleType:'' ,serviceType: '' }
+        }
+        return { ...item, [field]: value };
+      }
+      return item;
+    });
     setDataSource(newData);
+    console.log(newData);
   };
 
   const columns = [
@@ -46,12 +143,17 @@ const UserApprovalForm = () => {
       render: (_, { key }) => (
         <Select
           placeholder="Select Application"
-          onChange={(value) => handleFieldChange(value, key, 'application')}
+          onChange={(value) => {
+            handleFieldChange(value, key, 'application');
+            setSelectedApplication(value); // Update selected application
+          }}
           style={{ width: '100%' }}
         >
-          <Option value="app1">Finacle</Option>
-          <Option value="app2">Card System CMS</Option>
-          <Option value="app3">Change Management System</Option>
+          {applications.map(app => (
+                <Select.Option key={app.id} value={app.id}>
+                  {app.applicationName}
+                </Select.Option>
+              ))}
           {/* Add more options as needed */}
         </Select>
       ),
@@ -60,16 +162,25 @@ const UserApprovalForm = () => {
       title: <span style={{ color: '#8F0000' }}>Role Type</span>,
       dataIndex: 'roleType',
       key: 'roleType',
-      render: (_, { key }) => (
+      render: (_, { key,roleType }) => (
         <Select
+          value={roleType}
+          disabled={roleDisable}
           placeholder="Select Role Type"
-          onChange={(value) => handleFieldChange(value, key, 'roleType')}
+          onChange={(value) => {handleFieldChange(value, key, 'roleType');
+            setSelectedRole(value);} // Update selected application
+          }
           style={{ width: '100%' }}
         >
           
-          <Option value="092">Work Class</Option>
-          <Option value="093">Finacle Role</Option>
+          {/* <Option value="092">Work Class</Option>
+          <Option value="093">Finacle Role</Option> */}
           {/* Add more options as needed */}
+          {roles_dropdown.map(role => (
+            <Option key={role.id} value={role.id}>
+              {role.role}
+            </Option>
+          ))}
         </Select>
       ),
     },
@@ -77,16 +188,20 @@ const UserApprovalForm = () => {
       title: <span style={{ color: '#8F0000' }}>Service Type</span>,
       dataIndex: 'serviceType',
       key: 'serviceType',
-      render: (_, { key }) => (
+      render: (_, { key,serviceType }) => (
         <Select
           placeholder="Select Service Type"
-          onChange={(value) => handleFieldChange(value, key, 'serviceType')}
+          disabled={serviceDisable}
+          onChange={(value) => {       
+          handleFieldChange(value, key, 'serviceType');}}
+          value={serviceType}
           style={{ width: '100%' }}
         >
-          <Option value="005">CONTRACT STAFF</Option>
-          <Option value="006">TELLER</Option>
-          <Option value="098">BRANCH MANAGER</Option>
-          <Option value="ASSTM">ASSISTANT MANAGER</Option>
+           {service_dropdown.map(service => (
+            <Option key={service.service_code} value={service.service_code}>
+              {service.service}
+            </Option>
+          ))}
           {/* Add more options as needed */}
         </Select>
       ),
@@ -95,14 +210,19 @@ const UserApprovalForm = () => {
       title: <span style={{ color: '#8F0000' }}>Request Type</span>,
       dataIndex: 'requestType',
       key: 'requestType',
-      render: (_, { key }) => (
+      render: (_, { key,requestType }) => (
         <Select
+          value={requestType}
+          disabled={requestDisable}
           placeholder="Select Request Type"
           onChange={(value) => handleFieldChange(value, key, 'requestType')}
           style={{ width: '100%' }}
         >
-          <Option value="type1">User Deactivate</Option>
-          <Option value="type2">Password Reset</Option>
+          {requests_dropdown.map(request => (
+            <Option key={request.id} value={request.id}>
+              {request.requestType}
+            </Option>
+          ))}
           {/* Add more options as needed */}
         </Select>
       ),
@@ -112,12 +232,18 @@ const UserApprovalForm = () => {
       key: 'action',
       render: (_, { key }) => (
         <Button onClick={() => handleDelete(key)} type="link" danger>
-          Delete
+          <MinusCircleOutlined />  (Delete) 
         </Button>
       ),
     },
   ];
 
+
+// Function to format the option label
+const getOptionLabel = (employee, branchs) => {
+  const branch = branchs.find(b => b.solId === employee.branch);
+  return `${employee.name} - ${branch ? branch.solDescription : 'Unknown Branch'} - ${employee.email}`;
+};
   useEffect(() => {
     if (accessType !== 'Temporary') {
       form.resetFields(['fromDate', 'toDate']);
@@ -270,21 +396,37 @@ const UserApprovalForm = () => {
       <Card title={<span style={{ color: '#8F0000' }}>Recomender Details</span>}>
       <Row>
         <Col span={6}>
-      <Form.Item
-          name="Name"
-          label="Name"
-          rules={[{ required: true, message: 'Please enter Recomender Detail' }]}
-        >
-           
-        <Select
-          placeholder="Name"
-          style={{ width: '100%' }}
-        >
-          <Option value="type1">rajendra.dangol@ebl.com.np</Option>
-          <Option value="type2">kiran.mahat@ebl.com.np</Option>
-        </Select>
-        
-        </Form.Item>
+        <Form.Item
+        name="Name"
+        label="Name"
+        rules={[{ required: true, message: 'Please select a recommender' }]}
+      >
+  <Select
+    placeholder="Select an employee"
+    style={{ width: '100%' }}
+    allowClear
+    showSearch
+    filterOption={(input, option) => {
+      // Access the formatted label used in the option
+      const fullLabel = option.props['data-label'].toLowerCase();
+      // Perform the case-insensitive comparison
+      return fullLabel.includes(input.toLowerCase());
+    }}
+  >
+    {employees.map(emp => {
+      const optionLabel = getOptionLabel(emp, branchs);
+      return (
+        <Option key={emp.id} value={emp.email} data-label={optionLabel} labelRender={emp.email}>
+              <div>
+                <strong>{emp.name}</strong><br />
+                <span style={{ color: '#888' }}>{branchs.find(b => b.solId === emp.branch)?.solDescription || 'Unknown Branch'}</span><br />
+                <span style={{ color: '#555' }}>{emp.email}</span>
+              </div>
+            </Option>
+      );
+    })}
+  </Select>
+</Form.Item>
         </Col>
         <Col span={3}/>
         <Col span={6}>

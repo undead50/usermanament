@@ -21,7 +21,6 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const fetchBranchsAsync = createAsyncThunk('branch/fetchBranchs', async () => {
   try {
     const url = BACKEND_URL + '/branch/fetchBranchs';
-    alert(url)
     const response = await axiosInstance.get(url);
     return response.data;
   } catch (error) {
