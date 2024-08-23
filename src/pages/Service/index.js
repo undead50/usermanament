@@ -170,7 +170,7 @@ return (
             </Form.Item>
           )}
 
-<Form.Item name="applicaitonId" label="Application ID" rules={[{ required: true, message: 'Please select an application.' }]}>
+<Form.Item name="applicationId" label="Application ID" rules={[{ required: true, message: 'Please select an application.' }]}>
             <Select placeholder="Select an application">
               {applications.map(app => (
                 <Select.Option key={app.id} value={app.id}>

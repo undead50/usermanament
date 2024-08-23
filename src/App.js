@@ -14,10 +14,10 @@ function App() {
             colorPrimary: '#0067b2',
             colorInfo: '#0067b2',
             colorSuccess: '#42b086',
-            // borderRadiusXS: 16,
-            // borderRadiusSM: 16,
-            // borderRadius: 16,
-            // borderRadiusLG: 16,
+            borderRadiusXS: 16,
+            borderRadiusSM: 16,
+            borderRadius: 16,
+            borderRadiusLG: 16,
           },
         }}
       >

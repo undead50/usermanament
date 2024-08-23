@@ -101,6 +101,10 @@ const UserApprovalForm = () => {
   }, [selectedApplication, dispatch]);
 
   const onFinish = (values) => {
+    if(dataSource.length === 0){
+      message.error('Please select any Request Application Role.')
+      return false
+    }
     console.log('Form values:', values);
     message.success('User approval submitted successfully!');
   };
@@ -122,45 +126,68 @@ const UserApprovalForm = () => {
   };
 
   const handleFieldChange = (value, key, field) => {
-    const newData = dataSource.map((item) => {
+    let newData = [...dataSource];
+  
+    if (field === 'application') {
+      
+  
+      // Clear related fields when application is changed
+      resetStateService();
+      setRoleDisable(false);
+      setServiceDisable(false);
+      setRequestDisable(false);
+    }
+  
+    // Map through the dataSource to update the relevant item
+    newData = newData.map((item) => {
       if (item.key === key) {
-        if (field === 'application') {
-          // resetStateRole()
-          // resetStateRequest()
-          resetStateService();
-          setRoleDisable(false);
-          setServiceDisable(false);
-          setRequestDisable(false);
-          return { ...item, [field]: value, roleType: '', serviceType: '' };
-        }
         if (field === 'roleType') {
+          // Check for duplicate roleType in other rows
+          const isRoleTypeDuplicate = dataSource.some(
+            (otherItem) =>
+              otherItem.key !== key && otherItem.roleType === value
+          );
+  
+          if (isRoleTypeDuplicate) {
+            // Display an error message if duplicate roleType found
+            message.error('Same Role Type cannot be selected.');
+            return { ...item, [field]: '', serviceType: '', requestType: '' }; // Reset field
+          }
+  
           setRequestDisable(true);
-          return { ...item, [field]: value, serviceType: '', requestType: '' }; // Clear serviceType when roleType is changed
+          return { ...item, [field]: value, serviceType: '', requestType: '' };
         }
+  
         if (field === 'serviceType') {
           setRequestDisable(true);
           return { ...item, [field]: value, requestType: '' };
         }
+  
         if (field === 'requestType') {
           setRoleDisable(true);
           setServiceDisable(true);
           return { ...item, [field]: value, roleType: '', serviceType: '' };
         }
-        return { ...item, [field]: value };
+  
+      return { ...item, [field]: value };
+        
       }
       return item;
     });
+  
     setDataSource(newData);
     console.log(newData);
   };
+  
 
   const columns = [
     {
       title: <span style={{ color: '#8F0000' }}>Application</span>,
       dataIndex: 'application',
       key: 'application',
-      render: (_, { key }) => (
+      render: (_, { key,application }) => (
         <Select
+          // value={application}
           placeholder="Select Application"
           onChange={(value) => {
             handleFieldChange(value, key, 'application');
@@ -293,9 +320,10 @@ const UserApprovalForm = () => {
         }
       />
       <br />
+      <Form form={form} layout="vertical" onFinish={onFinish}>
       <Card title={<span style={{ color: '#8F0000' }}>Employee Details</span>}>
         {/* Employee Details Section */}
-        <Form form={form} layout="vertical" onFinish={onFinish}>
+        
           {/* <Divider orientation="left">Employee Details</Divider> */}
           <Row>
             <Col span={6}>
@@ -412,7 +440,7 @@ const UserApprovalForm = () => {
             Submit
           </Button>
         </Form.Item> */}
-        </Form>
+        
       </Card>
       <br />
       <Card
@@ -432,21 +460,21 @@ const UserApprovalForm = () => {
                 style={{ width: '100%' }}
                 onChange={setAccessType}
               >
-                <Option value="Temporary">Temporary</Option>
-                <Option value="Permanent">Permanent</Option>
+                <Option value="T">Temporary</Option>
+                <Option value="P">Permanent</Option>
                 {/* Add more options as needed */}
               </Select>
             </Form.Item>
           </Col>
         </Row>
         <br />
-        {accessType === 'Temporary' && (
+        {accessType === 'T' && (
           <Row gutter={16}>
             <Col span={6}>
               <Form.Item
                 name="fromDate"
                 label="From Date"
-                rules={[{ required: true, message: 'Please select From Date' }]}
+                rules={[{ required: true ? accessType === 'T':false, message: 'Please select From Date' }]}
               >
                 <DatePicker style={{ width: '100%' }} />
               </Form.Item>
@@ -455,7 +483,7 @@ const UserApprovalForm = () => {
               <Form.Item
                 name="toDate"
                 label="To Date"
-                rules={[{ required: true, message: 'Please select To Date' }]}
+                rules={[{ required: true ? accessType === 'T':false, message: 'Please select To Date' }]}
               >
                 <DatePicker style={{ width: '100%' }} />
               </Form.Item>
@@ -571,7 +599,15 @@ const UserApprovalForm = () => {
       </Card>
       <br />
       <Card title={<span style={{ color: '#8F0000' }}>Remarks</span>}>
+      <Form.Item
+              name="Remarks"
+              label="Remarks"
+              rules={[
+                { required: true, message: 'Please provide remarks' },
+              ]}
+            >
         <TextArea></TextArea>
+        </Form.Item>
       </Card>
       <br />
       <div>
@@ -581,6 +617,7 @@ const UserApprovalForm = () => {
           </Button>
         </Form.Item>
       </div>
+      </Form>   
     </div>
   );
 };
