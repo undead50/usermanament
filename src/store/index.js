@@ -22,7 +22,7 @@ import { applicationReducer } from './slices/applicationSlice';
 import { requestReducer } from './slices/requestSlice';
 import { roleReducer } from './slices/roleSlice';
 import { serviceReducer } from './slices/serviceSlice';
-
+import { userapprovalmasterReducer } from './slices/userapprovalmasterSlice';
 
 const secretKey = '081fbadce74f99af29c8280fce633fb9';
 
@@ -38,25 +38,21 @@ const encryptor = createTransform(
 );
 const rootReducer = combineReducers({
   // auth:authReducer,
-  service:serviceReducer,
-  role:roleReducer,
-  request:requestReducer,
-  application:applicationReducer,
-  employee:employeeReducer,
-  user:userReducer,
-  branch:branchReducer,
+  service: serviceReducer,
+  role: roleReducer,
+  request: requestReducer,
+  application: applicationReducer,
+  employee: employeeReducer,
+  user: userReducer,
+  branch: branchReducer,
+  userapprovalmaster: userapprovalmasterReducer,
 });
 const persistConfig = {
   key: 'root_user_approval',
   storage,
   transforms: [encryptor], // Use the encryptTransform directly
-  whitelist: [
-    'branch',
-    'auth',
-    'user'
-  ],
+  whitelist: ['branch', 'auth', 'user'],
 };
-
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

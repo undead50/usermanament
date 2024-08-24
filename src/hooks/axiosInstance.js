@@ -5,13 +5,10 @@ import axios from 'axios';
 import { notification } from 'antd';
 // import { setUser, FlushUserData } from '../store/index';
 
-
 let store;
 export const injectStore = (_store) => {
   store = _store;
 };
-
-
 
 const axiosInstance = axios.create({
   // Replace with your API base URL
@@ -27,12 +24,12 @@ axiosInstance.interceptors.request.use(
     //   }`;
     if (config.data instanceof FormData) {
       config.headers['Content-Type'] = 'multipart/form-data';
-      config.headers['Accept'] = '*/*'
+      config.headers['Accept'] = '*/*';
       config.headers['mimeType'] = 'multipart/form-data';
     } else {
       config.headers['Content-Type'] = 'application/json';
     }
-    console.log('file')
+    console.log('file');
     console.log('Request Interceptor:', config);
     return config;
   },
@@ -66,7 +63,7 @@ axiosInstance.interceptors.response.use(
   (response) => {
     // Modify the response data before passing it to the .then() callback
     console.log('Response Interceptor:', response);
-    if (response && response.status === 200) {
+    if (response && response.status >= 200 && response.status < 300) {
       return response;
     }
   },
