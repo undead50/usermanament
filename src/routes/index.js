@@ -11,6 +11,7 @@ import ApplicationTable from '../pages/Application';
 import RequestTable from '../pages/Request';
 import RoleTable from '../pages/Role';
 import ServiceTable from '../pages/Service';
+import UserapprovalmasterTable from '../pages/UserApproval/index';
 
 function MyRoutes() {
   return (
@@ -18,9 +19,10 @@ function MyRoutes() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route element={<AdminLayout />}>
-          <Route path='/' element={<UserApprovalForm/>}/>
-          {/* <Route path="/" element={<Dashboard />} /> */}
+          <Route path='/create-approval' element={<UserApprovalForm/>}/>
+          <Route path="/" element={<Dashboard />} />
           <Route path="/create-report" element={<CreateReport />} />
+          <Route path="/approval-index" element={<UserapprovalmasterTable/>}/>
           {/* <Route path="/initiate-swift" element={<SwiftMessage />} />
           <Route path="/camera" element={<CameraComponent/>}/> */}
           <Route path="/branch" element={<BranchTable/>}/>

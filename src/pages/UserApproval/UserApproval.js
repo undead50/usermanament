@@ -31,6 +31,7 @@ import {
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
 import { createUserapprovalmasterAsync } from '../../store/slices/userapprovalmasterSlice';
+import { EyeOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -131,16 +132,21 @@ const UserApprovalForm = () => {
       status: 'REQUESTED',
       recommendedBy: null,
       approvedBy: null,
+      delFlag:'N',
+      currentHandler:values.recomenderName,
       applicationRoleRequests: dataSource.map((item) => ({
-        applicationId: item.application, // assuming 1 maps to 0
-        roleTypeId: item.roleType, // assuming 52 maps to 0
-        serviceType: item.serviceType, // converting "MBG" to null
-        requestType: null ? item.requestType == '' : item.requestType, // converting "" to 0
+        applicationId: item.application, 
+        roleTypeId: item.roleType, 
+        serviceType: item.serviceType, 
+        requestType: null ? item.requestType == '' : item.requestType, 
+        delFlag:'N'
       })),
       userApprovalHistories: [
         {
           status: 'REQUESTED',
           remarks: values.Remarks,
+          commentedBy: values.employeeName,
+          delFlag:'N'
         },
       ],
     };
@@ -395,7 +401,7 @@ const UserApprovalForm = () => {
         flexDirection: 'column',
         width: '100%',
         padding: '30px',
-        backgroundColor: '#FFFFE0',
+        backgroundColor: '#edf0f2',
       }}
     >
       <Card
@@ -616,7 +622,7 @@ const UserApprovalForm = () => {
           <Row>
             <Col span={6}>
               <Form.Item
-                name="Name"
+                name="recomenderName"
                 label="Name"
                 rules={[
                   { required: true, message: 'Please select a recommender' },
@@ -641,7 +647,7 @@ const UserApprovalForm = () => {
                     return (
                       <Option
                         key={emp.id}
-                        value={emp.email} // Store the email as the selected value
+                        value={emp.id} // Store the email as the selected value
                         label={emp.email} // Display email when selected
                         data-label={optionLabel} // For filtering purposes
                       >

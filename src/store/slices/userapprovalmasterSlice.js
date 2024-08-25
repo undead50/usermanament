@@ -15,14 +15,30 @@ const initialState = {
   userapprovalmasters: [],
   userapprovalmaster_loading: false,
   userapprovalmaster_error: null,
+  approvalDetail:[],
+  approvalDetail_loading:false
+
 };
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+export const fetchUserapprovalmastersById = createAsyncThunk(
+  'change/fetchChangeByID',
+  async (approvalId) => {
+    try {
+      const url = BACKEND_URL + `/user-approvals/${approvalId}`;
+      const response = await axiosInstance.get(url);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.error);
+    }
+  }
+);
 
 export const fetchUserapprovalmastersAsync = createAsyncThunk(
   'userapprovalmaster/fetchUserapprovalmasters',
   async () => {
     try {
-      const url = BACKEND_URL + '/userapprovalmaster/fetchUserapprovalmasters';
+      const url = BACKEND_URL + '/user-approvals';
       const response = await axiosInstance.get(url);
       return response.data;
     } catch (error) {
@@ -51,7 +67,7 @@ export const updateUserapprovalmasterAsync = createAsyncThunk(
     try {
       const url =
         BACKEND_URL +
-        `/userapprovalmaster/updateUserapprovalmaster/${userapprovalmasterData.id}`;
+        `/user-approvals/${userapprovalmasterData.id}`;
       const response = await axiosInstance.put(url, userapprovalmasterData);
       return response.data;
     } catch (error) {
@@ -83,6 +99,18 @@ const userapprovalmasterSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUserapprovalmastersById.pending, (state) => {
+        state.approvalDetail_loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserapprovalmastersById.fulfilled, (state, action) => {
+        state.approvalDetail_loading = false;
+        state.approvalDetail = action.payload;
+      })
+      .addCase(fetchUserapprovalmastersById.rejected, (state, action) => {
+        state.approvalDetail_loading = false;
+        state.error = action.error.message;
+      })
       .addCase(fetchUserapprovalmastersAsync.pending, (state) => {
         state.loading = true;
         state.error = null;

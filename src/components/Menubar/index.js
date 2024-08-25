@@ -18,11 +18,11 @@ const items = [
         children: [
           {
             key: '',
-            label: 'Option 1',
+            label: 'Dashboard',
           },
           {
-            key: '2',
-            label: 'Option 2',
+            key: '/create-approval',
+            label: 'Request Approval',
           },
         ],
       },
@@ -116,13 +116,13 @@ function MenuBar() {
             color: white !important; // White text color for items
           }
           .ant-menu-item:hover {
-            background-color: #a9111d !important; // Darker red on hover
+            background-color: yellow !important; // Darker red on hover
           }
           .ant-menu-submenu-title {
             color: white !important; // White text color for submenu titles
           }
           .ant-menu-submenu-title:hover {
-            background-color: #a9111d !important; // Darker red on hover
+            background-color: yellow !important; // Darker red on hover
           }
         `}
       </style>
