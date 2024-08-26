@@ -7,7 +7,7 @@
   height: 100vh;
   background: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
   z-index: 999; /* Ensures it is on top of other elements */
-  opacity: 1; /* Full opacity */
+  opacity: 0; /* Full opacity */
   transition: all 0.5s; /* Smooth transition for visibility changes */
 }
 
@@ -19,3 +19,5 @@
   padding: 20px; /* Optional: padding inside the modal */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: shadow for better appearance */
 }
+
+

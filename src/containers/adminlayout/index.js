@@ -179,11 +179,12 @@ const AdminLayout = () => {
       </Button>
       <Modal
         title="Login"
-        visible={visible}
+        open={visible}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null} // No default footer (Ok/Cancel buttons)
         className="blur-background"
+        maskClosable={false}
       >
         <Form
           name="login"
