@@ -67,19 +67,41 @@ const UserRequestView = (props) => {
   // Handle form submission
   const handleFormSubmit = (values) => {
     console.log('Form values:', values);
-    // Create a new copy of the approvalDetail object
-    const updatedApprovalDetail = { ...approvalDetail };
+    // Create a deep copy of the approvalDetail object
+    const updatedApprovalDetail = JSON.parse(JSON.stringify(approvalDetail));
+
 
     // Update the status based on action
     if (action === 'approve') {
       updatedApprovalDetail.status = 'APPROVED';
+      updatedApprovalDetail.approvedBy = updatedApprovalDetail.currentHandler;
+      updatedApprovalDetail.userApprovalHistories.push({
+      status :"APPROVED",
+      remarks : values.comments,
+      delFlag :"N",
+      commentedBy : updatedApprovalDetail.currentHandler
+      })
     } else if (action === 'recommend') {
-      alert(values.approverId);
+      updatedApprovalDetail.userApprovalHistories.push({
+        status :"RECOMMENDED",
+        remarks : values.comments,
+        delFlag :"N",
+        commentedBy : updatedApprovalDetail.currentHandler
+        })
       updatedApprovalDetail.currentHandler = values.approverId;
       updatedApprovalDetail.status = 'RECOMMENDED';
+     
       console.log(updatedApprovalDetail);
     } else if (action === 'reject') {
       updatedApprovalDetail.status = 'REJECTED';
+      updatedApprovalDetail.userApprovalHistories.push({
+        status :"REJECTED",
+        remarks : values.comments,
+        delFlag :"N",
+        commentedBy : updatedApprovalDetail.currentHandler
+        })
+      updatedApprovalDetail.currentHandler = updatedApprovalDetail.requestedBy;
+      
     }
 
     // Dispatch the action with the updated object
@@ -113,7 +135,7 @@ const UserRequestView = (props) => {
                 size="small"
                 style={{ marginBottom: '24px' }}
               >
-                <Descriptions.Item label="ID">
+                {/* <Descriptions.Item label="ID">
                   {' '}
                   <Tag
                     key={approvalDetail.id}
@@ -126,7 +148,7 @@ const UserRequestView = (props) => {
                       }
                     })}
                   </Tag>
-                </Descriptions.Item>
+                </Descriptions.Item> */}
                 <Descriptions.Item label="Access Type">
                   <Tag
                     bordered={false}
@@ -143,16 +165,29 @@ const UserRequestView = (props) => {
                   </Tag>
                 </Descriptions.Item>
                 <Descriptions.Item label="Requested By">
-                  {approvalDetail.requestedBy}
+                  {employees.map((emp)=>{
+                    if (emp.id == approvalDetail.requestedBy){
+                      return emp.email
+                    }
+                  })}
                 </Descriptions.Item>
                 <Descriptions.Item label="Current Handler">
-                  {approvalDetail.currentHandler}
+                  {/* {approvalDetail.currentHandler} */}
+                  {employees.map((emp)=>{
+                    if (emp.id === approvalDetail.currentHandler){
+                      return emp.email
+                    }
+                  })}
                 </Descriptions.Item>
                 <Descriptions.Item label="Recommended By">
                   {approvalDetail.recommendedBy || 'N/A'}
                 </Descriptions.Item>
                 <Descriptions.Item label="Approved By">
-                  {approvalDetail.approvedBy || 'N/A'}
+                  {employees.map((emp)=>{
+                    if (emp.id == approvalDetail.approvedBy){
+                      return emp.email
+                    }
+                  })}
                 </Descriptions.Item>
                 <Descriptions.Item label="Created At">
                   {approvalDetail.createdAt}
@@ -202,15 +237,20 @@ const UserRequestView = (props) => {
             >
               <List
                 itemLayout="horizontal"
-                dataSource={approvalDetail.userApprovalHistories}
+                // Sort the userApprovalHistories by id in descending order
+                dataSource={[...(approvalDetail.userApprovalHistories ?? [])].sort((a, b) => b.id - a.id)}
                 renderItem={(item) => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<Text strong>Status: {item.status}</Text>}
+                      title={<Text>Status: {item.status}</Text>}
                       description={
                         <Space direction="vertical">
                           <Text>Remarks: {item.remarks}</Text>
-                          <Text>Commented By: {item.commentedBy}</Text>
+                          <Text>Commented By: {employees.map((emp)=>{
+                    if (emp.id == item.commentedBy){
+                      return emp.email
+                    }
+                  })}</Text>
                         </Space>
                       }
                     />

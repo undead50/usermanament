@@ -77,7 +77,7 @@ const items = [
           {
             key: '/service',
             label: 'Service',
-          },
+          }
         ],
       },
     ],

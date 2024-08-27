@@ -12,7 +12,7 @@ import {
   createTransform,
 } from 'redux-persist';
 
-// import { login, logout, FlushUserData, authReducer } from './slices/authSlice';
+import { login, logout, FlushUserData, authReducer } from './slices/authSlice';
 import { setUser, userReducer } from './slices/userSlice';
 import { branchReducer } from './slices/branchSlice';
 
@@ -23,6 +23,7 @@ import { requestReducer } from './slices/requestSlice';
 import { roleReducer } from './slices/roleSlice';
 import { serviceReducer } from './slices/serviceSlice';
 import { userapprovalmasterReducer } from './slices/userapprovalmasterSlice';
+import { ApplicationOwnerReducer } from './slices/ApplicationOwnerSlice';
 
 const secretKey = '081fbadce74f99af29c8280fce633fb9';
 
@@ -37,7 +38,7 @@ const encryptor = createTransform(
   (outboundState, key) => decrypt(outboundState) // Decrypt the outbound state
 );
 const rootReducer = combineReducers({
-  // auth:authReducer,
+  auth:authReducer,
   service: serviceReducer,
   role: roleReducer,
   request: requestReducer,
@@ -68,4 +69,4 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-// export { login, logout, setUser, FlushUserData };
+export { login, logout, setUser, FlushUserData };

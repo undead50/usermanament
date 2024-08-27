@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, DatePicker, Space } from 'antd';
+import { Table, Button, Modal, Form, Input, DatePicker, Space,Select,Tag } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   createApplicationAsync,
@@ -7,7 +7,10 @@ import {
       fetchApplicationsAsync,
         updateApplicationAsync,
 } from '../../store/slices/applicationSlice';
+import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
 // import { useNotification } from '../../hooks/index';
+
+const { Option } = Select;
 
 const ApplicationTable = () => {
   const [form] = Form.useForm();
@@ -24,9 +27,21 @@ const ApplicationTable = () => {
     (state) => state.application
   );
 
+  const {employees,employee_loading} = useSelector((state)=>state.employee)
+
+  const {branchs,branch_loading} = useSelector((state)=>state.branch)
+
   // Function to handle opening the modal for adding/editing a record
   const handleEdit = (record) => {
-    form.setFieldsValue(record);
+    // Extract emails from applicationOwnerList to set as employeeName
+    const employeeNames = record.applicationOwnerList?.map((owner) => owner.email) || [];
+    
+    // Set fields, including employeeName
+    form.setFieldsValue({
+      ...record,
+      employeeName: employeeNames,
+    });
+    
     setEditMode(true);
     setIsModalVisible(true);
   };
@@ -45,6 +60,7 @@ const ApplicationTable = () => {
 
   useEffect(() => {
     dispatch(fetchApplicationsAsync());
+    dispatch(fetchEmployeesAsync())
     console.log(applications);
   }, []);
 
@@ -54,6 +70,13 @@ const ApplicationTable = () => {
     console.log(values);
     values.CreatedBy = userInfo.userName;
     if (editMode) {
+      console.log(values.employeeName)
+      const applicationOwnerList = values.employeeName.map((emp)=>{
+        return {
+          "email":emp,
+        }
+      })
+      values.applicationOwnerList = applicationOwnerList
       dispatch(updateApplicationAsync(values));
       // callNotification('Application Edited Successfully', 'success');
     } else {
@@ -77,9 +100,25 @@ const ApplicationTable = () => {
 
 
 {
-  title: 'applicationName',
+  title: 'Application Name',
     dataIndex: 'applicationName',
       key: 'applicationName',
+      },
+      {
+        title: 'Application Owners',
+        key: 'applicationOwnerList',
+        render: (text, record) => (
+          <div>
+            {record.applicationOwnerList?.map((request) => (
+              <Tag key={request.id} bordered={false} color="geekblue">
+                {
+                    request.email
+                }
+                
+              </Tag>
+            )) || 'No Applications'}
+          </div>
+        ),
       },
 
 
@@ -125,11 +164,57 @@ return (
               <Input />
             </Form.Item>
           )}
-        
         <Form.Item name="applicationName" label="applicationName">
           <Input />
         </Form.Item>
-        
+        {editMode && (
+        <Form.Item
+                name="employeeName"
+                label="Employee Name"
+                rules={[
+                  { required: false, message: 'Please enter Employee Name' },
+                ]}
+              >
+                <Select
+                  placeholder="Select an employee"
+                  mode="multiple"
+                  style={{ width: '100%' }}
+                  allowClear
+                  showSearch
+                  filterOption={(input, option) => {
+                    const fullLabel = option.props['data-label'].toLowerCase();
+                    return fullLabel.includes(input.toLowerCase());
+                  }}
+                  optionLabelProp="label" // Use the email as the label when an option is selected
+                >
+                  {employees.map((emp) => {
+                    const optionLabel = `${emp.name} - ${
+                      branchs.find((b) => b.solId === emp.branch)
+                        ?.solDescription || 'Unknown Branch'
+                    } - ${emp.email}`;
+                    return (
+                      <Option
+                        key={emp.id}
+                        value={emp.email} // Store the email as the selected value
+                        label={emp.email} // Display email when selected
+                        data-label={optionLabel} // For filtering purposes
+                      >
+                        <div>
+                          <strong>{emp.name}</strong>
+                          <br />
+                          <span style={{ color: '#888' }}>
+                            {branchs.find((b) => b.solId === emp.branch)
+                              ?.solDescription || 'Unknown Branch'}
+                          </span>
+                          <br />
+                          <span style={{ color: '#555' }}>{emp.email}</span>
+                        </div>
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+              )}
         <Form.Item>
           <Button type="primary" htmlType="submit">
             {editMode ? 'Update' : 'Add'}

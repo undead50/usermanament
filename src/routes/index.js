@@ -12,13 +12,20 @@ import RequestTable from '../pages/Request';
 import RoleTable from '../pages/Role';
 import ServiceTable from '../pages/Service';
 import UserapprovalmasterTable from '../pages/UserApproval/index';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 function MyRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route element={<AdminLayout />}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path='/create-approval' element={<UserApprovalForm/>}/>
           <Route path="/" element={<Dashboard />} />
           <Route path="/create-report" element={<CreateReport />} />

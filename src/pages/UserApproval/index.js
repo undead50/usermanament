@@ -11,6 +11,7 @@ import {
 import UserRequestView from './model/UserRequestView'
 import { fetchApplicationsAsync } from '../../store/slices/applicationSlice';
 import { EyeOutlined,DeleteOutlined,EditOutlined } from '@ant-design/icons';
+import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
 
 // import { useNotification } from '../../hooks/index';
 
@@ -64,6 +65,7 @@ const UserapprovalmasterTable = () => {
   useEffect(() => {
     dispatch(fetchUserapprovalmastersAsync());
     dispatch(fetchApplicationsAsync());
+    dispatch(fetchEmployeesAsync());
     console.log(userapprovalmasters);
   }, []);
 

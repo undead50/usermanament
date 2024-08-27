@@ -22,8 +22,11 @@ import SideBar from '../../components/Sidebar';
 import { useSelector, useDispatch } from 'react-redux';
 import MenuBar from '../../components/Menubar';
 import './login.css';
-// import { logout } from '../../store';
-// import { setUser, FlushUserData } from '../../store';
+import { useEffect } from 'react';
+import { postLoginData } from '../../store/slices/authSlice';
+import { useNotification } from '../../hooks/index';
+import { logout } from '../../store';
+import { setUser, FlushUserData } from '../../store';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Text } = Typography;
@@ -33,16 +36,54 @@ const AdminLayout = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  const { callNotification } = useNotification();
+
+  const { data, loading, error } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
+
+  useEffect(()=>{
+    if(data === null){
+      setVisible(true);
+    }
+  },[data])
+
+  useEffect(() => {
+    if (data) {
+      if (data.code === 0) {
+        dispatch(
+          setUser({
+            userName: data.empData.domainName,
+            solId: data.empData.branch,
+            email: data.empData.email,
+            departmentName: "IT",
+            employeeName: data.empData.name,
+            isSuperAdmin: true,
+            image: "",
+            solDesc: "",
+          })
+        );
+        console.log(data)
+        navigate('/');
+        setVisible(false)
+        callNotification('Login Success', 'success');
+      } else {
+        callNotification('Login Denied', 'error');
+      }
+    }
+  }, [data]);
+
 
   const showModal = () => {
     setVisible(true);
   };
 
-  const handleOk = () => {
-    setVisible(false);
+  const handleOk = (values) => {
+    dispatch(postLoginData(values))
   };
 
   const handleCancel = () => {
@@ -50,7 +91,7 @@ const AdminLayout = () => {
   };
 
   // const dispatch = useDispatch();
-  // const { userInfo } = useSelector((state) => state.user);
+  const { userInfo } = useSelector((state) => state.user);
 
   const handleCollapse = (collapsed) => {
     setCollapsed(collapsed);
@@ -78,14 +119,14 @@ const AdminLayout = () => {
         >
           {/* <Image src={base64Image} alt="Base64 Image" />  */}
           <Text style={{ marginTop: '0px', fontSize: 18, fontWeight: '500' }}>
-            {/* {userInfo?.userName} */}
+            {userInfo?.userName}
           </Text>
           <Text style={{ marginTop: '1px', fontSize: 13, color: '#606060' }}>
-            {/* {userInfo?.solDesc} */}
+            {userInfo?.solDesc}
           </Text>
           {/* <Text   style={{marginTop:'-1px', fontSize:12, color:"#6D6D6D"}}>Employee Id: 1923</Text> */}
           <Text style={{ fontSize: 13, color: '#606060' }}>
-            {/* {userInfo?.email} */}
+            {userInfo?.email}
           </Text>
         </div>
       </div>
@@ -109,18 +150,17 @@ const AdminLayout = () => {
 
   const handleLogout = () => {
     // Handle logout logic here
-    // dispatch(
-    //   setUser({
-    //     userName: null,
-    //     solId: null,
-    //     email: null,
-    //     departmentName: null,
-    //     token: null,
-    //   })
-    // );
-    // dispatch(FlushUserData());
-    // alert('removed from localstorage')
-    navigate('/login');
+    dispatch(
+      setUser({
+        userName: null,
+        solId: null,
+        email: null,
+        departmentName: null,
+        token: null,
+      })
+    );
+    dispatch(FlushUserData());
+    alert('removed from localstorage')
   };
 
   return (
@@ -141,6 +181,23 @@ const AdminLayout = () => {
           />
         </div>
         <MenuBar />
+        <div
+              style={{ flex: '50%', textAlign: 'right', marginRight: '18px' }}
+            >
+              <Popover
+                overlayStyle={{ position: 'fixed' }}
+                content={content}
+                title=""
+                trigger="click"
+                placement="topRight"
+              >
+                <Avatar
+                  size={40}
+                  icon={<UserOutlined />}
+                  style={{ cursor: 'pointer', marginTop: -3 }}
+                />
+              </Popover>
+            </div>
       </Header>
       <Content
         style={{
@@ -174,18 +231,23 @@ const AdminLayout = () => {
       >
         Everest Bank Ltd ©{new Date().getFullYear()} Created by IT Department
       </Footer>
-      <Button type="primary" onClick={showModal}>
+      {/* <Button type="primary" onClick={showModal}>
         Open Login Modal
-      </Button>
+      </Button> */}
       <Modal
-        title="Login"
+        title=""
         open={visible}
         onOk={handleOk}
-        onCancel={handleCancel}
+        onCancel={null}
         footer={null} // No default footer (Ok/Cancel buttons)
         className="blur-background"
         maskClosable={false}
+        width={'350px'}
       >
+        <br/>
+        <div style={{display:'flex',justifyContent:'center'}}>
+          <h3>User Approval System</h3>
+        </div>
         <Form
           name="login"
           initialValues={{ remember: true }}
