@@ -93,14 +93,17 @@ const UserApprovalForm = () => {
     dispatch(fetchApplicationsAsync());
     dispatch(fetchRequestsAsync());
     dispatch(fetchEmployeesAsync());
-     // Set form values
+    // Set form values
     form.setFieldsValue({
       employeeId: userInfo.employeeId,
       employeeSolId: userInfo.solId,
       employeeEmail: userInfo.email,
+      employeeName: userInfo.empId,
       finacleId: userInfo.cbsId,
-      employeeName:'17',
-      employeeBranch: branchs.find(branch => branch.solId === userInfo.solId)?.solDescription || '',
+      // employeeName: 17,
+      employeeBranch:
+        branchs.find((branch) => branch.solId === userInfo.solId)
+          ?.solDescription || '',
     });
   }, []);
 
@@ -143,21 +146,21 @@ const UserApprovalForm = () => {
       status: 'REQUESTED',
       recommendedBy: null,
       approvedBy: null,
-      delFlag:'N',
-      currentHandler:values.recomenderName,
+      delFlag: 'N',
+      currentHandler: values.recomenderName,
       applicationRoleRequests: dataSource.map((item) => ({
-        applicationId: item.application, 
-        roleTypeId: item.roleType, 
-        serviceType: item.serviceType, 
-        requestType: null ? item.requestType == '' : item.requestType, 
-        delFlag:'N'
+        applicationId: item.application,
+        roleTypeId: item.roleType,
+        serviceType: item.serviceType,
+        requestType: null ? item.requestType == '' : item.requestType,
+        delFlag: 'N',
       })),
       userApprovalHistories: [
         {
           status: 'REQUESTED',
           remarks: values.Remarks,
           commentedBy: values.employeeName,
-          delFlag:'N'
+          delFlag: 'N',
         },
       ],
     };
@@ -425,7 +428,12 @@ const UserApprovalForm = () => {
         }
       />
       <br />
-      <Form form={form} layout="vertical" onFinish={onFinish}>
+      <Form
+        form={form}
+        // initialValues={{ employeeName: 25 }}
+        layout="vertical"
+        onFinish={onFinish}
+      >
         <Card
           title={<span style={{ color: '#8F0000' }}>Employee Details</span>}
         >
@@ -452,9 +460,8 @@ const UserApprovalForm = () => {
                 rules={[
                   { required: true, message: 'Please enter Employee SOL ID' },
                 ]}
-                
               >
-                <Input placeholder="Enter Employee SOL ID"  disabled />
+                <Input placeholder="Enter Employee SOL ID" disabled />
               </Form.Item>
             </Col>
           </Row>
@@ -477,6 +484,7 @@ const UserApprovalForm = () => {
                     return fullLabel.includes(input.toLowerCase());
                   }}
                   optionLabelProp="label" // Use the email as the label when an option is selected
+                  disabled
                 >
                   {employees.map((emp) => {
                     const optionLabel = `${emp.name} - ${
@@ -515,9 +523,8 @@ const UserApprovalForm = () => {
                   { required: true, message: 'Please enter Employee Email' },
                   { type: 'email', message: 'Please enter a valid email' },
                 ]}
-                
               >
-                <Input placeholder="Enter Employee Email"  disabled/>
+                <Input placeholder="Enter Employee Email" disabled />
               </Form.Item>
             </Col>
           </Row>
@@ -530,7 +537,7 @@ const UserApprovalForm = () => {
                   { required: true, message: 'Please enter Employee Branch' },
                 ]}
               >
-                <Input placeholder="Enter Employee Branch" disabled/>
+                <Input placeholder="Enter Employee Branch" disabled />
               </Form.Item>
             </Col>
             <Col span={2} />
@@ -540,7 +547,7 @@ const UserApprovalForm = () => {
                 label="Finacle ID"
                 rules={[{ required: true, message: 'Please enter Finacle ID' }]}
               >
-                <Input placeholder="Enter Finacle ID" disabled/>
+                <Input placeholder="Enter Finacle ID" disabled />
               </Form.Item>
             </Col>
           </Row>
@@ -644,6 +651,17 @@ const UserApprovalForm = () => {
                 <Select
                   placeholder="Select an employee"
                   style={{ width: '100%' }}
+                  onChange={(value) => {
+                    const recomender = employees.find((emp) => {
+                      if (emp.id === value) {
+                        return emp;
+                      }
+                    });
+                    form.setFieldsValue({
+                      Department: recomender.departmentName,
+                      EmployeeId: recomender.employeeId,
+                    });
+                  }}
                   allowClear
                   showSearch
                   filterOption={(input, option) => {
@@ -661,7 +679,7 @@ const UserApprovalForm = () => {
                       <Option
                         key={emp.id}
                         value={emp.id} // Store the email as the selected value
-                        label={emp.email} // Display email when selected
+                        label={emp.name} // Display email when selected
                         data-label={optionLabel} // For filtering purposes
                       >
                         <div>
@@ -694,7 +712,7 @@ const UserApprovalForm = () => {
             </Col>
           </Row>
           <Row>
-            <Col span={6}>
+            {/* <Col span={6}>
               <Form.Item
                 name="Title"
                 label="Title"
@@ -702,8 +720,8 @@ const UserApprovalForm = () => {
               >
                 <Input placeholder="Title" />
               </Form.Item>
-            </Col>
-            <Col span={3} />
+            </Col> */}
+            {/* <Col span={3} /> */}
             <Col span={6}>
               <Form.Item
                 name="Department"

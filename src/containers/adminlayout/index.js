@@ -44,17 +44,15 @@ const AdminLayout = () => {
 
   const dispatch = useDispatch();
 
-  
-
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
 
-  useEffect(()=>{
-    if(data === null){
+  useEffect(() => {
+    if (data === null) {
       setVisible(true);
     }
-  },[data])
+  }, [data]);
 
   useEffect(() => {
     if (data) {
@@ -64,18 +62,19 @@ const AdminLayout = () => {
             userName: data.empData.domainName,
             solId: data.empData.branch,
             email: data.empData.email,
-            departmentName: "IT",
+            departmentName: 'IT',
             employeeName: data.empData.name,
             isSuperAdmin: true,
-            image: "",
-            solDesc: "",
-            employeeId:data.empData.employeeId,
-            cbsId:data.empData.cbsUsername
+            image: '',
+            solDesc: '',
+            employeeId: data.empData.employeeId,
+            cbsId: data.empData.cbsUsername,
+            empId: data.empData.id,
           })
         );
-        console.log(data)
+        console.log(data);
         navigate('/');
-        setVisible(false)
+        setVisible(false);
         callNotification('Login Success', 'success');
       } else {
         callNotification('Login Denied', 'error');
@@ -83,13 +82,12 @@ const AdminLayout = () => {
     }
   }, [data]);
 
-
   const showModal = () => {
     setVisible(true);
   };
 
   const handleOk = (values) => {
-    dispatch(postLoginData(values))
+    dispatch(postLoginData(values));
     form.resetFields();
   };
 
@@ -167,7 +165,6 @@ const AdminLayout = () => {
       })
     );
     dispatch(FlushUserData());
-
   };
 
   return (
@@ -188,23 +185,21 @@ const AdminLayout = () => {
           />
         </div>
         <MenuBar />
-        <div
-              style={{ flex: '50%', textAlign: 'right', marginRight: '18px' }}
-            >
-              <Popover
-                overlayStyle={{ position: 'fixed' }}
-                content={content}
-                title=""
-                trigger="click"
-                placement="topRight"
-              >
-                <Avatar
-                  size={40}
-                  icon={<UserOutlined />}
-                  style={{ cursor: 'pointer', marginTop: -3 }}
-                />
-              </Popover>
-            </div>
+        <div style={{ flex: '50%', textAlign: 'right', marginRight: '18px' }}>
+          <Popover
+            overlayStyle={{ position: 'fixed' }}
+            content={content}
+            title=""
+            trigger="click"
+            placement="topRight"
+          >
+            <Avatar
+              size={40}
+              icon={<UserOutlined />}
+              style={{ cursor: 'pointer', marginTop: -3 }}
+            />
+          </Popover>
+        </div>
       </Header>
       <Content
         style={{
@@ -243,66 +238,83 @@ const AdminLayout = () => {
       </Button> */}
       {visible && (
         <>
-      <div className="modal-blurred-background" >
-      <div className="modal-content">
-      <Modal
-        title=""
-        open={visible}
-        onOk={handleOk}
-        onCancel={null}
-        footer={null} // No default footer (Ok/Cancel buttons)
-        // className="blur-background"
-        maskClosable={false}
-        width={'350px'}
-      >
-        {/* <Image
+          <div className="modal-blurred-background">
+            <div className="modal-content">
+              <Modal
+                title=""
+                open={visible}
+                onOk={handleOk}
+                onCancel={null}
+                footer={null} // No default footer (Ok/Cancel buttons)
+                // className="blur-background"
+                maskClosable={false}
+                width={'350px'}
+              >
+                {/* <Image
                 className="modal-image"
                 src={process.env.PUBLIC_URL + '/images/everest_bank_logo_main.png'}
                 alt="Login"
                 preview={false}
               /> */}
-        <br/>
-        <Text
-          level={1}
-          style={{
-            textAlign: 'center',
-            // marginBottom: '15px',
-            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
-          }}
-        >
-          <h3>User Approval System</h3>
-        </Text>
-        <Text style={{fontSize:'9px'}}>(Login with AD username & password)</Text>
-        <Form
-          name="login"
-          form={form}
-          initialValues={{ remember: true }}
-          onFinish={handleOk}
-        >
-          <Form.Item
-            name="username"
-            rules={[{ required: true, message: 'Please input your Username!' }]}
-          >
-            <Input placeholder="Username" />
-          </Form.Item>
+                <br />
+                <Text
+                  level={1}
+                  style={{
+                    textAlign: 'center',
+                    // marginBottom: '15px',
+                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+                  }}
+                >
+                  <h3>User Approval System</h3>
+                </Text>
+                <Text style={{ fontSize: '9px' }}>
+                  (Login with AD username & password)
+                </Text>
+                <Form
+                  name="login"
+                  form={form}
+                  initialValues={{ remember: true }}
+                  onFinish={handleOk}
+                >
+                  <Form.Item
+                    name="username"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your Username!',
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Username" />
+                  </Form.Item>
 
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Please input your Password!' }]}
-          >
-            <Input.Password placeholder="Password" />
-          </Form.Item>
+                  <Form.Item
+                    name="password"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your Password!',
+                      },
+                    ]}
+                  >
+                    <Input.Password placeholder="Password" />
+                  </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" loading={loading} htmlType="submit" style={{ width: '100%' }}>
-              Login
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-      </div>
-      </div>
-      </>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      loading={loading}
+                      htmlType="submit"
+                      style={{ width: '100%' }}
+                    >
+                      Login
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Modal>
+            </div>
+          </div>
+        </>
       )}
     </Layout>
   );
