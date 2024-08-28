@@ -1,23 +1,16 @@
-/* Apply the blur effect to the entire modal mask */
-.blur-background .ant-modal-mask {
-  position: fixed; /* Ensures the mask covers the entire viewport */
+/* Styles for the blurred background overlay */
+.modal-blurred-background {
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
-  z-index: 999; /* Ensures it is on top of other elements */
-  opacity: 0; /* Full opacity */
-  transition: all 0.5s; /* Smooth transition for visibility changes */
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3); /* Semi-transparent overlay */
+  backdrop-filter: blur(8px); /* Apply blur effect */
+  z-index: 998; /* Ensure it's below the modal content */
 }
 
-/* Apply styles to the modal content */
-.blur-background .ant-modal-content {
-  position: relative; /* Ensure it is positioned relative to its container */
-  background-color: rgba(255, 255, 255, 0.963); /* Slightly transparent background */
-  border-radius: 8px; /* Optional: rounded corners */
-  padding: 20px; /* Optional: padding inside the modal */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: shadow for better appearance */
+.modal-content {
+  position: relative;
+  z-index: 999; /* Ensure it's above the blurred background */
 }
-
-

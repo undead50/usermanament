@@ -3,7 +3,7 @@
 import axios from 'axios';
 // import { setUser, FlushUserData } from '../store/index';
 import { notification } from 'antd';
-// import { setUser, FlushUserData } from '../store/index';
+import { setUser, FlushUserData } from '../store/index';
 
 let store;
 export const injectStore = (_store) => {
@@ -76,7 +76,7 @@ axiosInstance.interceptors.response.use(
       erroHandler(error.response, 'error');
     } else if (error.response && error.response.status === 401) {
       erroHandler('Unathorized Access', 'error');
-      // store.dispatch(FlushUserData());
+      store.dispatch(FlushUserData());
     }
     return Promise.reject(error);
   }

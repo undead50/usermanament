@@ -13,12 +13,14 @@ import RoleTable from '../pages/Role';
 import ServiceTable from '../pages/Service';
 import UserapprovalmasterTable from '../pages/UserApproval/index';
 import ProtectedRoute from '../components/ProtectedRoute';
+import Notfound from '../pages/System/404';
 
 function MyRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/not-found" element={<Notfound/>}/>
         <Route
           element={
             <ProtectedRoute>

@@ -45,6 +45,8 @@ const UserApprovalForm = () => {
     (state) => state.branch
   );
 
+  const { userInfo } = useSelector((state) => state.user);
+
   const { applications, loading, error } = useSelector(
     (state) => state.application
   );
@@ -91,6 +93,15 @@ const UserApprovalForm = () => {
     dispatch(fetchApplicationsAsync());
     dispatch(fetchRequestsAsync());
     dispatch(fetchEmployeesAsync());
+     // Set form values
+    form.setFieldsValue({
+      employeeId: userInfo.employeeId,
+      employeeSolId: userInfo.solId,
+      employeeEmail: userInfo.email,
+      finacleId: userInfo.cbsId,
+      employeeName:'17',
+      employeeBranch: branchs.find(branch => branch.solId === userInfo.solId)?.solDescription || '',
+    });
   }, []);
 
   useEffect(() => {
@@ -430,7 +441,7 @@ const UserApprovalForm = () => {
                   { required: true, message: 'Please enter Employee ID' },
                 ]}
               >
-                <Input placeholder="Enter Employee ID" />
+                <Input placeholder="Enter Employee ID" disabled />
               </Form.Item>
             </Col>
             <Col span={2} />
@@ -441,8 +452,9 @@ const UserApprovalForm = () => {
                 rules={[
                   { required: true, message: 'Please enter Employee SOL ID' },
                 ]}
+                
               >
-                <Input placeholder="Enter Employee SOL ID" />
+                <Input placeholder="Enter Employee SOL ID"  disabled />
               </Form.Item>
             </Col>
           </Row>
@@ -475,7 +487,7 @@ const UserApprovalForm = () => {
                       <Option
                         key={emp.id}
                         value={emp.id} // Store the email as the selected value
-                        label={emp.email} // Display email when selected
+                        label={emp.name} // Display email when selected
                         data-label={optionLabel} // For filtering purposes
                       >
                         <div>
@@ -503,8 +515,9 @@ const UserApprovalForm = () => {
                   { required: true, message: 'Please enter Employee Email' },
                   { type: 'email', message: 'Please enter a valid email' },
                 ]}
+                
               >
-                <Input placeholder="Enter Employee Email" />
+                <Input placeholder="Enter Employee Email"  disabled/>
               </Form.Item>
             </Col>
           </Row>
@@ -517,7 +530,7 @@ const UserApprovalForm = () => {
                   { required: true, message: 'Please enter Employee Branch' },
                 ]}
               >
-                <Input placeholder="Enter Employee Branch" />
+                <Input placeholder="Enter Employee Branch" disabled/>
               </Form.Item>
             </Col>
             <Col span={2} />
@@ -527,7 +540,7 @@ const UserApprovalForm = () => {
                 label="Finacle ID"
                 rules={[{ required: true, message: 'Please enter Finacle ID' }]}
               >
-                <Input placeholder="Enter Finacle ID" />
+                <Input placeholder="Enter Finacle ID" disabled/>
               </Form.Item>
             </Col>
           </Row>

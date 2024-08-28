@@ -36,11 +36,15 @@ const AdminLayout = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  const [form] = Form.useForm();
+
   const { callNotification } = useNotification();
 
   const { data, loading, error } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
+
+  
 
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
@@ -65,6 +69,8 @@ const AdminLayout = () => {
             isSuperAdmin: true,
             image: "",
             solDesc: "",
+            employeeId:data.empData.employeeId,
+            cbsId:data.empData.cbsUsername
           })
         );
         console.log(data)
@@ -84,6 +90,7 @@ const AdminLayout = () => {
 
   const handleOk = (values) => {
     dispatch(postLoginData(values))
+    form.resetFields();
   };
 
   const handleCancel = () => {
@@ -160,7 +167,7 @@ const AdminLayout = () => {
       })
     );
     dispatch(FlushUserData());
-    alert('removed from localstorage')
+
   };
 
   return (
@@ -234,22 +241,41 @@ const AdminLayout = () => {
       {/* <Button type="primary" onClick={showModal}>
         Open Login Modal
       </Button> */}
+      {visible && (
+        <>
+      <div className="modal-blurred-background" >
+      <div className="modal-content">
       <Modal
         title=""
         open={visible}
         onOk={handleOk}
         onCancel={null}
         footer={null} // No default footer (Ok/Cancel buttons)
-        className="blur-background"
+        // className="blur-background"
         maskClosable={false}
         width={'350px'}
       >
+        {/* <Image
+                className="modal-image"
+                src={process.env.PUBLIC_URL + '/images/everest_bank_logo_main.png'}
+                alt="Login"
+                preview={false}
+              /> */}
         <br/>
-        <div style={{display:'flex',justifyContent:'center'}}>
+        <Text
+          level={1}
+          style={{
+            textAlign: 'center',
+            // marginBottom: '15px',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+          }}
+        >
           <h3>User Approval System</h3>
-        </div>
+        </Text>
+        <Text style={{fontSize:'9px'}}>(Login with AD username & password)</Text>
         <Form
           name="login"
+          form={form}
           initialValues={{ remember: true }}
           onFinish={handleOk}
         >
@@ -268,12 +294,16 @@ const AdminLayout = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+            <Button type="primary" loading={loading} htmlType="submit" style={{ width: '100%' }}>
               Login
             </Button>
           </Form.Item>
         </Form>
       </Modal>
+      </div>
+      </div>
+      </>
+      )}
     </Layout>
   );
 };

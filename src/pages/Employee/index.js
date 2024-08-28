@@ -211,6 +211,12 @@ const EmployeeTable = () => {
           dataIndex: 'systemRole',
             key: 'systemRole',
             },
+            {
+              title: 'Employee Id',
+              dataIndex: 'employeeId',
+                key: 'employeeId',
+
+            },
 
             {
               title: 'Status',
@@ -322,6 +328,9 @@ return (
           <Input />
         </Form.Item>
         <Form.Item name="domainName" label="domainName">
+          <Input />
+        </Form.Item>
+        <Form.Item name="employeeId" label="employeeId">
           <Input />
         </Form.Item>
         
