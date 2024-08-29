@@ -13,13 +13,14 @@ const callNotification = (description, type) => {
 
 const initialState = {
   userapprovalmasters: [],
+  userapprovalmasters_current_handler: [],
   userapprovalmaster_loading: false,
+  userapprovalmasters_current_handler_loading: false,
   userapprovalmaster_error: null,
-  approvalDetail:[],
-  approvalDetail_loading:false,
-  upr_data:[],
-  upr_loading:false
-
+  approvalDetail: [],
+  approvalDetail_loading: false,
+  upr_data: [],
+  upr_loading: false,
 };
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -37,10 +38,25 @@ export const fetchUprById = createAsyncThunk(
 );
 
 export const fetchUserapprovalmastersById = createAsyncThunk(
-  'change/fetchChangeByID',
+  'user-approvals/fetchChangeByID',
   async (approvalId) => {
     try {
       const url = BACKEND_URL + `/user-approvals/${approvalId}`;
+      const response = await axiosInstance.get(url);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.error);
+    }
+  }
+);
+
+export const fetchUserapprovalmastersByCurrentHandler = createAsyncThunk(
+  'user-approvals/fetchUserapprovalmastersByCurrentHandler',
+  async (approvalId) => {
+    try {
+      const url =
+        BACKEND_URL +
+        `/user-approvals/fetchApprovalByCurrentHandler/${approvalId}`;
       const response = await axiosInstance.get(url);
       return response.data;
     } catch (error) {
@@ -80,9 +96,7 @@ export const updateUserapprovalmasterAsync = createAsyncThunk(
   'userapprovalmaster/updateUserapprovalmaster',
   async (userapprovalmasterData) => {
     try {
-      const url =
-        BACKEND_URL +
-        `/user-approvals/${userapprovalmasterData.id}`;
+      const url = BACKEND_URL + `/user-approvals/${userapprovalmasterData.id}`;
       const response = await axiosInstance.put(url, userapprovalmasterData);
       return response.data;
     } catch (error) {
@@ -114,6 +128,24 @@ const userapprovalmasterSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUserapprovalmastersByCurrentHandler.pending, (state) => {
+        state.userapprovalmasters_current_handler_loading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchUserapprovalmastersByCurrentHandler.fulfilled,
+        (state, action) => {
+          state.userapprovalmasters_current_handler_loading = false;
+          state.userapprovalmasters_current_handler = action.payload;
+        }
+      )
+      .addCase(
+        fetchUserapprovalmastersByCurrentHandler.rejected,
+        (state, action) => {
+          state.userapprovalmasters_current_handler = false;
+          state.error = action.error.message;
+        }
+      )
       .addCase(fetchUprById.pending, (state) => {
         state.upr_loading = true;
         state.error = null;

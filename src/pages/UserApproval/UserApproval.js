@@ -30,7 +30,10 @@ import {
 } from '../../store/slices/requestSlice';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
-import { createUserapprovalmasterAsync, fetchUprById } from '../../store/slices/userapprovalmasterSlice';
+import {
+  createUserapprovalmasterAsync,
+  fetchUprById,
+} from '../../store/slices/userapprovalmasterSlice';
 import { EyeOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
@@ -51,7 +54,7 @@ const UserApprovalForm = () => {
     (state) => state.application
   );
 
-  const { upr_data} = useSelector((state)=>state.userapprovalmaster)
+  const { upr_data } = useSelector((state) => state.userapprovalmaster);
 
   const { requests } = useSelector((state) => state.request);
 
@@ -95,7 +98,7 @@ const UserApprovalForm = () => {
     dispatch(fetchApplicationsAsync());
     dispatch(fetchRequestsAsync());
     dispatch(fetchEmployeesAsync());
-    dispatch(fetchUprById(userInfo.cbsId))
+    dispatch(fetchUprById(userInfo.cbsId));
     // Set form values
     form.setFieldsValue({
       employeeId: userInfo.employeeId,
@@ -114,7 +117,6 @@ const UserApprovalForm = () => {
     setRoleTypeDropDwon(roles_dropdown);
     setServiceTypeDropDown(service_dropdown);
     setRequestTypeDropDown(requests_dropdown);
-
   }, [roles_dropdown, service_dropdown, requests_dropdown]);
 
   useEffect(() => {
@@ -215,33 +217,55 @@ const UserApprovalForm = () => {
 
   const handleFieldChange = (value, key, field) => {
     let newData = [...dataSource];
-    if (field === 'roleType'){
-
+    if (field === 'roleType') {
       // Find the role with name containing 'Work Class'
-      const roleWithWorkClass = roles_dropdown.find(role => role.role.includes('Work Class'));
+      const roleWithWorkClass = roles_dropdown.find((role) =>
+        role.role.includes('Work Class')
+      );
 
-      const roleWithRole = roles_dropdown.find(role =>role.role.includes('Role'))
+      const roleWithRole = roles_dropdown.find((role) =>
+        role.role.includes('Role')
+      );
 
-      const roleWithApplName = roles_dropdown.find(role =>role.role.includes('Appl Name'))
+      const roleWithApplName = roles_dropdown.find((role) =>
+        role.role.includes('Appl Name')
+      );
 
-      if (roleWithApplName && roleWithRole && roleWithWorkClass){
-
+      if (roleWithApplName && roleWithRole && roleWithWorkClass) {
         // Extract the ID from the found role, or use a default value if not found
         const roleId = roleWithWorkClass ? roleWithWorkClass.id : null;
 
-        const data =  [{key:1,application:1, roleType: roleId, serviceType: '',ExsistingServiceType: upr_data[0].user_WORK_CLASS },
-          {key:2,application:1,  roleType: roleWithRole.id, serviceType: '',ExsistingServiceType: upr_data[0].role_ID },
-          {key:3,application:1,  roleType: roleWithApplName.id, serviceType: '',ExsistingServiceType: upr_data[0].user_APPL_NAME }
+        const data = [
+          {
+            key: 1,
+            application: 1,
+            roleType: roleId,
+            serviceType: '',
+            ExsistingServiceType:
+              upr_data === '' ? 'Not Found' : upr_data[0].user_WORK_CLASS,
+          },
+          {
+            key: 2,
+            application: 1,
+            roleType: roleWithRole.id,
+            serviceType: '',
+            ExsistingServiceType:
+              upr_data === '' ? 'Not Found' : upr_data[0].role_ID,
+          },
+          {
+            key: 3,
+            application: 1,
+            roleType: roleWithApplName.id,
+            serviceType: '',
+            ExsistingServiceType:
+              upr_data === '' ? 'Not Found' : upr_data[0].user_APPL_NAME,
+          },
         ];
         setDataSource(data);
-        setRequestDisable(true)
-        return false
+        setRequestDisable(true);
+        return false;
       }
-
-      
     }
-
-    
 
     if (field === 'application') {
       // dispatch(resetStateRequest());
@@ -273,10 +297,6 @@ const UserApprovalForm = () => {
     // Map through the dataSource to update the relevant item
     newData = newData.map((item) => {
       if (item.key === key) {
-
-        
-
-
         if (field === 'roleType') {
           if (item.application === '' || item.application === undefined) {
             message.error('Select Application First');
@@ -390,7 +410,7 @@ const UserApprovalForm = () => {
           style={{ width: '100%' }}
         >
           {serviceTypeDropDown.map((service) => (
-            <Option key={service.service_code} value={service.service_code} >
+            <Option key={service.service_code} value={service.service_code}>
               {service.service}
             </Option>
           ))}
@@ -398,12 +418,12 @@ const UserApprovalForm = () => {
         </Select>
       ),
     },
-    !serviceDisable &&{
+    !serviceDisable && {
       title: <span style={{ color: '#8F0000' }}>Exsisting Service Type</span>,
       dataIndex: 'ExsistingServiceType',
       key: 'ExsistingServiceType',
       render: (_, { key, ExsistingServiceType }) => (
-        <Input value={ExsistingServiceType} disabled/>
+        <Input value={ExsistingServiceType} disabled />
       ),
     },
     !requestDisable && {
@@ -673,25 +693,21 @@ const UserApprovalForm = () => {
                 columns={columns}
                 dataSource={dataSource}
                 pagination={false}
-                rowKey="roleType"
+                rowKey="roleType,application"
                 onRow={(record) => ({
-                  onMouseEnter: () => 
-                  {
+                  onMouseEnter: () => {
                     if (record && record.roleType) {
-                    //alert(record.roleType)
-                    
-                    const role = {
-                      id: record.roleType,
-                    };
-                    dispatch(fetchServicesDropDownAsync(role));
-                  } else{
-                    dispatch(resetStateService());
-                  }
-                  } 
+                      const role = {
+                        id: record.roleType,
+                      };
+                      dispatch(fetchServicesDropDownAsync(role));
+                    } else {
+                      dispatch(resetStateService());
+                    }
+                  },
                   // onMouseLeave: () => console.log(`Mouse left row with ID ${record.id}`),
                 })}
                 bordered
-
               />
             </>
           )}

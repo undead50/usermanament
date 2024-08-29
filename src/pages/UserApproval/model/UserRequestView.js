@@ -70,38 +70,36 @@ const UserRequestView = (props) => {
     // Create a deep copy of the approvalDetail object
     const updatedApprovalDetail = JSON.parse(JSON.stringify(approvalDetail));
 
-
     // Update the status based on action
     if (action === 'approve') {
       updatedApprovalDetail.status = 'APPROVED';
       updatedApprovalDetail.approvedBy = updatedApprovalDetail.currentHandler;
       updatedApprovalDetail.userApprovalHistories.push({
-      status :"APPROVED",
-      remarks : values.comments,
-      delFlag :"N",
-      commentedBy : updatedApprovalDetail.currentHandler
-      })
+        status: 'APPROVED',
+        remarks: values.comments,
+        delFlag: 'N',
+        commentedBy: updatedApprovalDetail.currentHandler,
+      });
     } else if (action === 'recommend') {
       updatedApprovalDetail.userApprovalHistories.push({
-        status :"RECOMMENDED",
-        remarks : values.comments,
-        delFlag :"N",
-        commentedBy : updatedApprovalDetail.currentHandler
-        })
+        status: 'RECOMMENDED',
+        remarks: values.comments,
+        delFlag: 'N',
+        commentedBy: updatedApprovalDetail.currentHandler,
+      });
       updatedApprovalDetail.currentHandler = values.approverId;
       updatedApprovalDetail.status = 'RECOMMENDED';
-     
+
       console.log(updatedApprovalDetail);
     } else if (action === 'reject') {
       updatedApprovalDetail.status = 'REJECTED';
       updatedApprovalDetail.userApprovalHistories.push({
-        status :"REJECTED",
-        remarks : values.comments,
-        delFlag :"N",
-        commentedBy : updatedApprovalDetail.currentHandler
-        })
+        status: 'REJECTED',
+        remarks: values.comments,
+        delFlag: 'N',
+        commentedBy: updatedApprovalDetail.currentHandler,
+      });
       updatedApprovalDetail.currentHandler = updatedApprovalDetail.requestedBy;
-      
     }
 
     // Dispatch the action with the updated object
@@ -165,17 +163,17 @@ const UserRequestView = (props) => {
                   </Tag>
                 </Descriptions.Item>
                 <Descriptions.Item label="Requested By">
-                  {employees.map((emp)=>{
-                    if (emp.id == approvalDetail.requestedBy){
-                      return emp.email
+                  {employees.map((emp) => {
+                    if (emp.id == approvalDetail.requestedBy) {
+                      return emp.email;
                     }
                   })}
                 </Descriptions.Item>
                 <Descriptions.Item label="Current Handler">
                   {/* {approvalDetail.currentHandler} */}
-                  {employees.map((emp)=>{
-                    if (emp.id === approvalDetail.currentHandler){
-                      return emp.email
+                  {employees.map((emp) => {
+                    if (emp.id === approvalDetail.currentHandler) {
+                      return emp.email;
                     }
                   })}
                 </Descriptions.Item>
@@ -183,9 +181,9 @@ const UserRequestView = (props) => {
                   {approvalDetail.recommendedBy || 'N/A'}
                 </Descriptions.Item>
                 <Descriptions.Item label="Approved By">
-                  {employees.map((emp)=>{
-                    if (emp.id == approvalDetail.approvedBy){
-                      return emp.email
+                  {employees.map((emp) => {
+                    if (emp.id == approvalDetail.approvedBy) {
+                      return emp.email;
                     }
                   })}
                 </Descriptions.Item>
@@ -238,7 +236,9 @@ const UserRequestView = (props) => {
               <List
                 itemLayout="horizontal"
                 // Sort the userApprovalHistories by id in descending order
-                dataSource={[...(approvalDetail.userApprovalHistories ?? [])].sort((a, b) => b.id - a.id)}
+                dataSource={[
+                  ...(approvalDetail.userApprovalHistories ?? []),
+                ].sort((a, b) => b.id - a.id)}
                 renderItem={(item) => (
                   <List.Item>
                     <List.Item.Meta
@@ -246,11 +246,14 @@ const UserRequestView = (props) => {
                       description={
                         <Space direction="vertical">
                           <Text>Remarks: {item.remarks}</Text>
-                          <Text>Commented By: {employees.map((emp)=>{
-                    if (emp.id == item.commentedBy){
-                      return emp.email
-                    }
-                  })}</Text>
+                          <Text>
+                            Commented By:{' '}
+                            {employees.map((emp) => {
+                              if (emp.id == item.commentedBy) {
+                                return emp.email;
+                              }
+                            })}
+                          </Text>
                         </Space>
                       }
                     />
@@ -260,27 +263,29 @@ const UserRequestView = (props) => {
             </Card>
 
             {/* Radio buttons for actions */}
-            <Radio.Group
-              onChange={handleRadioChange}
-              value={action}
-              style={{ marginBottom: '24px' }}
-            >
-              <Radio value="recommend">
-                <Tag color="blue" bordered={false}>
-                  Recommend
-                </Tag>
-              </Radio>
-              <Radio value="approve">
-                <Tag color="green" bordered={false}>
-                  Approve
-                </Tag>
-              </Radio>
-              <Radio value="reject">
-                <Tag color="red" bordered={false}>
-                  Reject
-                </Tag>
-              </Radio>
-            </Radio.Group>
+            {approvalDetail.status !== 'REJECTED' && (
+              <Radio.Group
+                onChange={handleRadioChange}
+                value={action}
+                style={{ marginBottom: '24px' }}
+              >
+                <Radio value="recommend">
+                  <Tag color="blue" bordered={false}>
+                    Recommend
+                  </Tag>
+                </Radio>
+                <Radio value="approve">
+                  <Tag color="green" bordered={false}>
+                    Approve
+                  </Tag>
+                </Radio>
+                <Radio value="reject">
+                  <Tag color="red" bordered={false}>
+                    Reject
+                  </Tag>
+                </Radio>
+              </Radio.Group>
+            )}
 
             <Card
               title={<Title level={5}>Approval</Title>}

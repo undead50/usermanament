@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, DatePicker, Space,Tag } from 'antd';
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  DatePicker,
+  Space,
+  Tag,
+} from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   createUserapprovalmasterAsync,
-    deleteUserapprovalmasterAsync,
-      fetchUserapprovalmastersAsync,
-        fetchUserapprovalmastersById,
-        updateUserapprovalmasterAsync,
+  deleteUserapprovalmasterAsync,
+  fetchUserapprovalmastersAsync,
+  fetchUserapprovalmastersByCurrentHandler,
+  fetchUserapprovalmastersById,
+  updateUserapprovalmasterAsync,
 } from '../../store/slices/userapprovalmasterSlice';
-import UserRequestView from './model/UserRequestView'
+import UserRequestView from './model/UserRequestView';
 import { fetchApplicationsAsync } from '../../store/slices/applicationSlice';
-import { EyeOutlined,DeleteOutlined,EditOutlined } from '@ant-design/icons';
+import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
 
 // import { useNotification } from '../../hooks/index';
@@ -27,11 +37,16 @@ const UserapprovalmasterTable = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.user);
 
-  const { userapprovalmasters, loading, error } = useSelector(
-    (state) => state.userapprovalmaster
-  );
+  const {
+    userapprovalmasters,
+    loading,
+    error,
+    userapprovalmasters_current_handler,
+  } = useSelector((state) => state.userapprovalmaster);
 
-  const { applications,application_loading,application_error} = useSelector((state)=>state.application)
+  const { applications, application_loading, application_error } = useSelector(
+    (state) => state.application
+  );
 
   // Function to handle opening the modal for adding/editing a record
   const handleEdit = (record) => {
@@ -40,15 +55,14 @@ const UserapprovalmasterTable = () => {
     setIsModalVisible(true);
   };
 
-  const handleView = (record) =>{
-    dispatch(fetchUserapprovalmastersById(record.id))
-    setVisible(true)
-  }
+  const handleView = (record) => {
+    dispatch(fetchUserapprovalmastersById(record.id));
+    setVisible(true);
+  };
 
   const onCancel = () => {
     setVisible(false);
   };
-
 
   const handleAdd = () => {
     setEditMode(false);
@@ -63,13 +77,14 @@ const UserapprovalmasterTable = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchUserapprovalmastersAsync());
+    // dispatch(fetchUserapprovalmastersAsync());
+    dispatch(fetchUserapprovalmastersByCurrentHandler(userInfo.empId));
     dispatch(fetchApplicationsAsync());
     dispatch(fetchEmployeesAsync());
     console.log(userapprovalmasters);
   }, []);
 
-  const dataSource = userapprovalmasters;
+  const dataSource = userapprovalmasters_current_handler;
 
   const onFinish = (values) => {
     console.log(values);
@@ -86,129 +101,132 @@ const UserapprovalmasterTable = () => {
   };
 
   const columns = [
-
-    
-
-{
-  title: 'Work Flow Id',
-    dataIndex: 'id',
+    {
+      title: 'Work Flow Id',
+      dataIndex: 'id',
       key: 'id',
-      },
-      {
-        title: 'Application Name',
-        key: 'applicationId',
-        render: (text, record) => (
-          <div>
-            {record.applicationRoleRequests?.map((request) => (
-              <Tag key={request.id} bordered={false} color="geekblue">
-                {applications.map((app)=>{
-                  if (app.id === request.applicationId){
-                    return app.applicationName
-                  }
-                })}
-                
-              </Tag>
-            )) || 'No Applications'}
-          </div>
-        ),
-      },
+    },
+    {
+      title: 'Application Name',
+      key: 'applicationId',
+      render: (text, record) => (
+        <div>
+          {record.applicationRoleRequests?.map((request) => (
+            <Tag key={request.id} bordered={false} color="geekblue">
+              {applications.map((app) => {
+                if (app.id === request.applicationId) {
+                  return app.applicationName;
+                }
+              })}
+            </Tag>
+          )) || 'No Applications'}
+        </div>
+      ),
+    },
 
+    {
+      title: 'Access Type',
+      dataIndex: 'accessType',
+      key: 'accessType',
+      render: (text) => (
+        <Tag color={text === 'T' ? 'blue' : 'green'} bordered={false}>
+          {text === 'T' ? 'Temporary' : 'Permanent'}
+        </Tag>
+      ),
+    },
 
-
-      {
-        title: 'Access Type',
-        dataIndex: 'accessType',
-        key: 'accessType',
-        render: (text) => (
-          <Tag color={text === 'T' ? 'blue' : 'green'} bordered={false}>
-            {text === 'T' ? 'Temporary' : 'Permanent'}
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => {
+        let color = 'geekblue';
+        if (status === 'APPROVED') {
+          color = 'green';
+        } else if (status === 'REJECTED') {
+          color = 'volcano';
+        } else if (status === 'RECOMMENDED') {
+          color = 'gold';
+        }
+        return (
+          <Tag bordered={false} color={color}>
+            {status.toUpperCase()}
           </Tag>
-        ),
+        );
       },
+    },
 
-      {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-        render: (status) => {
-          let color = 'geekblue';
-          if (status === 'APPROVED') {
-            color = 'green';
-          } else if (status === 'REJECTED') {
-            color = 'volcano';
-          } else if (status === 'RECOMMENDED') {
-            color = 'gold';
-          }
-          return <Tag bordered={false} color={color}>{status.toUpperCase()}</Tag>;
-        },
-      },
-
-
-
-{
-  title: 'Action',
-    key: 'action',
+    {
+      title: 'Action',
+      key: 'action',
       render: (_, record) => (
         <Space>
-          <Button onClick={() => handleEdit(record)}><EditOutlined/></Button>
-          <Button onClick={() => handleDelete(record)}><DeleteOutlined /></Button>
-          <Button onClick={() => handleView(record)}> <EyeOutlined /></Button>
+          <Button onClick={() => handleEdit(record)}>
+            <EditOutlined />
+          </Button>
+          <Button onClick={() => handleDelete(record)}>
+            <DeleteOutlined />
+          </Button>
+          <Button onClick={() => handleView(record)}>
+            {' '}
+            <EyeOutlined />
+          </Button>
         </Space>
       ),
     },
   ];
 
-return (
-  <div>
-    <Button
-      type="primary"
-      onClick={() => handleAdd()}
-      style={{ marginBottom: '16px' }}
-    >
-      Add
-    </Button>
-    <Table dataSource={dataSource} columns={columns} />
+  return (
+    <div>
+      <Button
+        type="primary"
+        onClick={() => handleAdd()}
+        style={{ marginBottom: '16px' }}
+      >
+        Add
+      </Button>
+      <Table dataSource={dataSource} columns={columns} />
 
-    {/* Modal for adding/editing a record */}
-    <Modal
-      title={editMode ? 'Edit Record' : 'Add Record'}
-      open={isModalVisible}
-      onCancel={() => {
-        setIsModalVisible(false);
-        form.resetFields();
-      }}
-      footer={null}
-    >
-      <Form form={form} onFinish={onFinish}>
-        {/* Add form fields here based on your column fields */}
-        {editMode && (
+      {/* Modal for adding/editing a record */}
+      <Modal
+        title={editMode ? 'Edit Record' : 'Add Record'}
+        open={isModalVisible}
+        onCancel={() => {
+          setIsModalVisible(false);
+          form.resetFields();
+        }}
+        footer={null}
+      >
+        <Form form={form} onFinish={onFinish}>
+          {/* Add form fields here based on your column fields */}
+          {editMode && (
             <Form.Item name="id" hidden={true}>
               <Input />
             </Form.Item>
           )}
-        
-        <Form.Item name="id" label="id">
-          <Input />
-        </Form.Item>
-        
-        <Form.Item name="accessType" label="accessType">
-          <Input />
-        </Form.Item>
-        
-        <Form.Item name="status" label="status">
-          <Input />
-        </Form.Item>
-        
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            {editMode ? 'Update' : 'Add'}
-          </Button>
-        </Form.Item>
-      </Form>
-    </Modal>
-    <UserRequestView visible={visible} onCancel={onCancel} />
-  </div>
-);
+
+          <Form.Item name="id" label="id">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="accessType" label="accessType">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="status" label="status">
+            <Input />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              {editMode ? 'Update' : 'Add'}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <UserRequestView visible={visible} onCancel={onCancel} />
+    </div>
+  );
 };
 
 export default UserapprovalmasterTable;
