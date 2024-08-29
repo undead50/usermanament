@@ -16,10 +16,25 @@ const initialState = {
   userapprovalmaster_loading: false,
   userapprovalmaster_error: null,
   approvalDetail:[],
-  approvalDetail_loading:false
+  approvalDetail_loading:false,
+  upr_data:[],
+  upr_loading:false
 
 };
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+export const fetchUprById = createAsyncThunk(
+  'user-approvals/fetchUprById',
+  async (approvalId) => {
+    try {
+      const url = BACKEND_URL + `/user-approvals/fetchUprCbs/${approvalId}`;
+      const response = await axiosInstance.get(url);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.error);
+    }
+  }
+);
 
 export const fetchUserapprovalmastersById = createAsyncThunk(
   'change/fetchChangeByID',
@@ -99,6 +114,18 @@ const userapprovalmasterSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUprById.pending, (state) => {
+        state.upr_loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUprById.fulfilled, (state, action) => {
+        state.upr_loading = false;
+        state.upr_data = action.payload;
+      })
+      .addCase(fetchUprById.rejected, (state, action) => {
+        state.upr_loading = false;
+        state.error = action.error.message;
+      })
       .addCase(fetchUserapprovalmastersById.pending, (state) => {
         state.approvalDetail_loading = true;
         state.error = null;
