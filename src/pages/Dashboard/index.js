@@ -13,6 +13,7 @@ import CountUp from 'react-countup';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { fetchUserapprovalmastersByCurrentHandler } from '../../store/slices/userapprovalmasterSlice';
 
 
 const Dashboard = () => {
@@ -20,6 +21,10 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // const { data } = useSelector((state) => state.auth);
+
+  const {userapprovalmasters_current_handler } = useSelector((state)=>state.userapprovalmaster)
+
+  const {userInfo} = useSelector((state)=>state.user)
 
 
   useEffect(() => {
@@ -58,6 +63,7 @@ const Dashboard = () => {
     // dispatch(fetchMyChangesAsync(data.empData.email));
     // dispatch(fetchChangesAsync(data.empData.email));
     // dispatch(fetchChangesApprovedAsync(data.empData.email));
+    dispatch(fetchUserapprovalmastersByCurrentHandler(userInfo.empId));
   }, []);
 
   return <>
@@ -129,7 +135,7 @@ const Dashboard = () => {
           title="Pending"
           prefix={<ClockCircleOutlined style={{ marginRight: 8 }} />}
           style={{ fontWeight: 'bold' }}
-          // value={changes.length}
+          value={userapprovalmasters_current_handler.length}
           formatter={formatter}
         />
       </Card>

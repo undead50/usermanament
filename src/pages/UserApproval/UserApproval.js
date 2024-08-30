@@ -9,6 +9,7 @@ import {
   Select,
   message,
   Divider,
+  Modal,
   Row,
   Col,
   Table,
@@ -47,6 +48,8 @@ const UserApprovalForm = () => {
   const { branchs, branch_loading, branch_error } = useSelector(
     (state) => state.branch
   );
+
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const { userInfo } = useSelector((state) => state.user);
 
@@ -139,6 +142,14 @@ const UserApprovalForm = () => {
   }, [selectedApplication, dispatch]);
 
   const onFinish = (values) => {
+
+    Modal.confirm({
+      title: 'Confirm Submission',
+      content: 'Are you sure you want to submit this form?',
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk() {
+         
     if (dataSource.length === 0) {
       message.error('Please select any Request Application Role.');
       return false;
@@ -174,6 +185,10 @@ const UserApprovalForm = () => {
 
     console.log('Form values:', values);
     //message.success('User approval submitted successfully!');
+      },
+    });
+
+   
   };
 
   const handleAdd = () => {
@@ -825,7 +840,7 @@ const UserApprovalForm = () => {
         <br />
         <div>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" >
               Submit
             </Button>
           </Form.Item>

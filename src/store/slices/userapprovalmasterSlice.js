@@ -210,6 +210,16 @@ const userapprovalmasterSlice = createSlice({
         if (index !== -1) {
           state.userapprovalmasters[index] = updatedUserapprovalmaster;
         }
+
+        state.userapprovalmasters_current_handler_loading = false;  
+        const updatedUserapprovalmasterCurrentHandler = action.payload;
+        const index1 = state.userapprovalmasters_current_handler.findIndex(
+          (userapprovalmasterch) =>
+            userapprovalmasterch.id === updatedUserapprovalmasterCurrentHandler.id
+        );
+        if (index1 !== -1) {
+          state.userapprovalmasters_current_handler[index1] = updatedUserapprovalmasterCurrentHandler;
+        }
         callNotification('Operation Successfull', 'success');
       })
       .addCase(updateUserapprovalmasterAsync.rejected, (state, action) => {
