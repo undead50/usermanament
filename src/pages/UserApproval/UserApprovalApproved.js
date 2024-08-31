@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   createUserapprovalmasterAsync,
   deleteUserapprovalmasterAsync,
+  fetchUserApprovalApproved,
   fetchUserapprovalmastersAsync,
   fetchUserapprovalmastersByCurrentHandler,
   fetchUserapprovalmastersById,
@@ -25,7 +26,7 @@ import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
 
 // import { useNotification } from '../../hooks/index';
 
-const UserapprovalmasterTable = () => {
+const UserApprovalApprovedTable = () => {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formValues, setFormValues] = useState({});
@@ -79,17 +80,14 @@ const UserapprovalmasterTable = () => {
 
   useEffect(() => {
     // dispatch(fetchUserapprovalmastersAsync());
-    dispatch(fetchUserapprovalmastersByCurrentHandler(userInfo.empId));
+    // dispatch(fetchUserapprovalmastersByCurrentHandler(userInfo.empId));
+    dispatch(fetchUserApprovalApproved(userInfo.email));
     dispatch(fetchApplicationsAsync());
     dispatch(fetchEmployeesAsync());
     console.log(userapprovalmasters);
   }, []);
 
-  useEffect(() => {
-    dispatch(fetchUserapprovalmastersByCurrentHandler(userInfo.empId));
-  }, [userapprovalmasters_current_handler]);
-
-  const dataSource = userapprovalmasters_current_handler;
+  const dataSource = userapprovalmaster_approved;
 
   const onFinish = (values) => {
     console.log(values);
@@ -234,4 +232,4 @@ const UserapprovalmasterTable = () => {
   );
 };
 
-export default UserapprovalmasterTable;
+export default UserApprovalApprovedTable;

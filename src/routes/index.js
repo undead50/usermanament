@@ -14,13 +14,14 @@ import ServiceTable from '../pages/Service';
 import UserapprovalmasterTable from '../pages/UserApproval/index';
 import ProtectedRoute from '../components/ProtectedRoute';
 import Notfound from '../pages/System/404';
+import UserApprovalApprovedTable from '../pages/UserApproval/UserApprovalApproved';
 
 function MyRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/not-found" element={<Notfound/>}/>
+        <Route path="/not-found" element={<Notfound />} />
         <Route
           element={
             <ProtectedRoute>
@@ -28,19 +29,22 @@ function MyRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route path='/create-approval' element={<UserApprovalForm/>}/>
+          <Route path="/create-approval" element={<UserApprovalForm />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="/create-report" element={<CreateReport />} />
-          <Route path="/approval-index" element={<UserapprovalmasterTable/>}/>
+          <Route path="/approval-index" element={<UserapprovalmasterTable />} />
           {/* <Route path="/initiate-swift" element={<SwiftMessage />} />
           <Route path="/camera" element={<CameraComponent/>}/> */}
-          <Route path="/branch" element={<BranchTable/>}/>
-          <Route path="/employee" element={<EmployeeTable/>}/>
-          <Route path="/application" element={<ApplicationTable/>}/>
-          <Route path="/request" element={<RequestTable/>}/>
-          <Route path="/role" element={<RoleTable/>}/>
-          <Route path="/service" element={<ServiceTable/>}/>
-
+          <Route path="/branch" element={<BranchTable />} />
+          <Route path="/employee" element={<EmployeeTable />} />
+          <Route path="/application" element={<ApplicationTable />} />
+          <Route path="/request" element={<RequestTable />} />
+          <Route path="/role" element={<RoleTable />} />
+          <Route path="/service" element={<ServiceTable />} />
+          <Route
+            path="/user-approval-approved"
+            element={<UserApprovalApprovedTable />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

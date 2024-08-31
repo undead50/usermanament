@@ -33,6 +33,8 @@ const UserRequestView = (props) => {
 
   const { applications, loading } = useSelector((state) => state.application);
 
+  const { userInfo } = useSelector((state) => state.user);
+
   const dispatch = useDispatch();
 
   const { employees, employee_loading, employee_error } = useSelector(
@@ -80,6 +82,7 @@ const UserRequestView = (props) => {
         delFlag: 'N',
         commentedBy: updatedApprovalDetail.currentHandler,
       });
+      updatedApprovalDetail.currentHandler = null;
     } else if (action === 'recommend') {
       updatedApprovalDetail.userApprovalHistories.push({
         status: 'RECOMMENDED',
@@ -100,6 +103,16 @@ const UserRequestView = (props) => {
         commentedBy: updatedApprovalDetail.currentHandler,
       });
       updatedApprovalDetail.currentHandler = updatedApprovalDetail.requestedBy;
+    } else if (action === 'implemented') {
+      updatedApprovalDetail.status = 'IMPLEMENTED';
+      updatedApprovalDetail.userApprovalHistories.push({
+        status: 'IMPLEMENTED',
+        remarks: values.comments,
+        delFlag: 'N',
+        commentedBy:
+          employees.find((emp) => emp.email === userInfo.email)?.id || null,
+      });
+      updatedApprovalDetail.currentHandler = null;
     }
 
     // Dispatch the action with the updated object
@@ -263,29 +276,41 @@ const UserRequestView = (props) => {
             </Card>
 
             {/* Radio buttons for actions */}
-            {approvalDetail.status !== 'REJECTED' && (
-              <Radio.Group
-                onChange={handleRadioChange}
-                value={action}
-                style={{ marginBottom: '24px' }}
-              >
-                <Radio value="recommend">
-                  <Tag color="blue" bordered={false}>
-                    Recommend
-                  </Tag>
-                </Radio>
-                <Radio value="approve">
-                  <Tag color="green" bordered={false}>
-                    Approve
-                  </Tag>
-                </Radio>
-                <Radio value="reject">
-                  <Tag color="red" bordered={false}>
-                    Reject
-                  </Tag>
-                </Radio>
-              </Radio.Group>
-            )}
+            {approvalDetail.status !== 'REJECTED' &&
+              approvalDetail.status !== 'IMPLEMENTED' && (
+                <Radio.Group
+                  onChange={handleRadioChange}
+                  value={action}
+                  style={{ marginBottom: '24px' }}
+                >
+                  {approvalDetail.status === 'APPROVED' ? (
+                    <Radio value="implemented">
+                      <Tag color="blue" bordered={false}>
+                        Implemented
+                      </Tag>
+                    </Radio>
+                  ) : (
+                    <>
+                      <Radio value="recommend">
+                        <Tag color="blue" bordered={false}>
+                          Recommend
+                        </Tag>
+                      </Radio>
+                      <Radio value="approve">
+                        <Tag color="green" bordered={false}>
+                          Approve
+                        </Tag>
+                      </Radio>
+                    </>
+                  )}
+
+                  <Radio value="reject">
+                    <Tag color="red" bordered={false}>
+                      Reject
+                    </Tag>
+                  </Radio>
+                </Radio.Group>
+              )}
 
             <Card
               title={<Title level={5}>Approval</Title>}

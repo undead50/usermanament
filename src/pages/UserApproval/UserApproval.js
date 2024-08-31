@@ -142,53 +142,49 @@ const UserApprovalForm = () => {
   }, [selectedApplication, dispatch]);
 
   const onFinish = (values) => {
-
     Modal.confirm({
       title: 'Confirm Submission',
       content: 'Are you sure you want to submit this form?',
       okText: 'Yes',
       cancelText: 'No',
       onOk() {
-         
-    if (dataSource.length === 0) {
-      message.error('Please select any Request Application Role.');
-      return false;
-    }
+        if (dataSource.length === 0) {
+          message.error('Please select any Request Application Role.');
+          return false;
+        }
 
-    const payload = {
-      accessType: values.accessType,
-      fromDate: values.fromDate,
-      toDate: values.toDate,
-      requestedBy: values.employeeName,
-      status: 'REQUESTED',
-      recommendedBy: null,
-      approvedBy: null,
-      delFlag: 'N',
-      currentHandler: values.recomenderName,
-      applicationRoleRequests: dataSource.map((item) => ({
-        applicationId: item.application,
-        roleTypeId: item.roleType,
-        serviceType: item.serviceType,
-        requestType: null ? item.requestType == '' : item.requestType,
-        delFlag: 'N',
-      })),
-      userApprovalHistories: [
-        {
+        const payload = {
+          accessType: values.accessType,
+          fromDate: values.fromDate,
+          toDate: values.toDate,
+          requestedBy: values.employeeName,
           status: 'REQUESTED',
-          remarks: values.Remarks,
-          commentedBy: values.employeeName,
+          recommendedBy: null,
+          approvedBy: null,
           delFlag: 'N',
-        },
-      ],
-    };
-    dispatch(createUserapprovalmasterAsync(payload));
+          currentHandler: values.recomenderName,
+          applicationRoleRequests: dataSource.map((item) => ({
+            applicationId: item.application,
+            roleTypeId: item.roleType,
+            serviceType: item.serviceType,
+            requestType: null ? item.requestType == '' : item.requestType,
+            delFlag: 'N',
+          })),
+          userApprovalHistories: [
+            {
+              status: 'REQUESTED',
+              remarks: values.Remarks,
+              commentedBy: values.employeeName,
+              delFlag: 'N',
+            },
+          ],
+        };
+        dispatch(createUserapprovalmasterAsync(payload));
 
-    console.log('Form values:', values);
-    //message.success('User approval submitted successfully!');
+        console.log('Form values:', values);
+        //message.success('User approval submitted successfully!');
       },
     });
-
-   
   };
 
   const handleAdd = () => {
@@ -257,7 +253,9 @@ const UserApprovalForm = () => {
             roleType: roleId,
             serviceType: '',
             ExsistingServiceType:
-              upr_data === '' ? 'Not Found' : upr_data[0].user_WORK_CLASS,
+              !upr_data || !upr_data[0] || !upr_data[0].user_WORK_CLASS
+                ? 'Not Found'
+                : upr_data[0].user_WORK_CLASS,
           },
           {
             key: 2,
@@ -265,7 +263,9 @@ const UserApprovalForm = () => {
             roleType: roleWithRole.id,
             serviceType: '',
             ExsistingServiceType:
-              upr_data === '' ? 'Not Found' : upr_data[0].role_ID,
+              !upr_data || !upr_data[0] || !upr_data[0].role_ID
+                ? 'Not Found'
+                : upr_data[0].role_ID,
           },
           {
             key: 3,
@@ -273,9 +273,12 @@ const UserApprovalForm = () => {
             roleType: roleWithApplName.id,
             serviceType: '',
             ExsistingServiceType:
-              upr_data === '' ? 'Not Found' : upr_data[0].user_APPL_NAME,
+              !upr_data || !upr_data[0] || !upr_data[0].user_APPL_NAME
+                ? 'Not Found'
+                : upr_data[0].user_APPL_NAME,
           },
         ];
+
         setDataSource(data);
         setRequestDisable(true);
         return false;
@@ -840,7 +843,7 @@ const UserApprovalForm = () => {
         <br />
         <div>
           <Form.Item>
-            <Button type="primary" htmlType="submit" >
+            <Button type="primary" htmlType="submit">
               Submit
             </Button>
           </Form.Item>

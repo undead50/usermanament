@@ -27,6 +27,10 @@ import { postLoginData } from '../../store/slices/authSlice';
 import { useNotification } from '../../hooks/index';
 import { logout } from '../../store';
 import { setUser, FlushUserData } from '../../store';
+import {
+  fetchUserApprovalApproved,
+  fetchUserapprovalmastersByCurrentHandler,
+} from '../../store/slices/userapprovalmasterSlice';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Text } = Typography;
@@ -73,6 +77,8 @@ const AdminLayout = () => {
           })
         );
         console.log(data);
+        dispatch(fetchUserapprovalmastersByCurrentHandler(data.empData.id));
+        dispatch(fetchUserApprovalApproved(data.empData.email));
         navigate('/');
         setVisible(false);
         callNotification('Login Success', 'success');

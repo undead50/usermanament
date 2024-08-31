@@ -14,11 +14,13 @@ const callNotification = (description, type) => {
 const initialState = {
   userapprovalmasters: [],
   userapprovalmasters_current_handler: [],
+  userapprovalmaster_approved: [],
   userapprovalmaster_loading: false,
   userapprovalmasters_current_handler_loading: false,
   userapprovalmaster_error: null,
   approvalDetail: [],
   approvalDetail_loading: false,
+  userapprovalmaster_approved_loading: false,
   upr_data: [],
   upr_loading: false,
 };
@@ -29,6 +31,20 @@ export const fetchUprById = createAsyncThunk(
   async (approvalId) => {
     try {
       const url = BACKEND_URL + `/user-approvals/fetchUprCbs/${approvalId}`;
+      const response = await axiosInstance.get(url);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.error);
+    }
+  }
+);
+export const fetchUserApprovalApproved = createAsyncThunk(
+  'user-approvals/fetchUserApprovalApproved',
+  async (handler) => {
+    try {
+      const url =
+        BACKEND_URL +
+        `/user-approvals/fetchApprovalApproved?current_handler=${handler}`;
       const response = await axiosInstance.get(url);
       return response.data;
     } catch (error) {
@@ -128,6 +144,18 @@ const userapprovalmasterSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUserApprovalApproved.pending, (state) => {
+        state.userapprovalmaster_approved_loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserApprovalApproved.fulfilled, (state, action) => {
+        state.userapprovalmaster_approved_loading = false;
+        state.userapprovalmaster_approved = action.payload;
+      })
+      .addCase(fetchUserApprovalApproved.rejected, (state, action) => {
+        state.userapprovalmaster_approved_loading = false;
+        state.error = action.error.message;
+      })
       .addCase(fetchUserapprovalmastersByCurrentHandler.pending, (state) => {
         state.userapprovalmasters_current_handler_loading = true;
         state.error = null;
@@ -211,15 +239,29 @@ const userapprovalmasterSlice = createSlice({
           state.userapprovalmasters[index] = updatedUserapprovalmaster;
         }
 
-        state.userapprovalmasters_current_handler_loading = false;  
+        state.userapprovalmasters_current_handler_loading = false;
         const updatedUserapprovalmasterCurrentHandler = action.payload;
         const index1 = state.userapprovalmasters_current_handler.findIndex(
           (userapprovalmasterch) =>
-            userapprovalmasterch.id === updatedUserapprovalmasterCurrentHandler.id
+            userapprovalmasterch.id ===
+            updatedUserapprovalmasterCurrentHandler.id
         );
         if (index1 !== -1) {
-          state.userapprovalmasters_current_handler[index1] = updatedUserapprovalmasterCurrentHandler;
+          state.userapprovalmasters_current_handler[index1] =
+            updatedUserapprovalmasterCurrentHandler;
         }
+
+        state.userapprovalmaster_approved_loading = false;
+        const updatedUserapprovalApproved = action.payload;
+        const index3 = state.userapprovalmaster_approved.findIndex(
+          (userapprovalapproved) =>
+            userapprovalapproved.id === updatedUserapprovalApproved.id
+        );
+        if (index3 !== -1) {
+          state.userapprovalmaster_approved[index3] =
+            updatedUserapprovalApproved;
+        }
+
         callNotification('Operation Successfull', 'success');
       })
       .addCase(updateUserapprovalmasterAsync.rejected, (state, action) => {

@@ -4,6 +4,7 @@ import axios from 'axios';
 // import { setUser, FlushUserData } from '../store/index';
 import { notification } from 'antd';
 import { setUser, FlushUserData } from '../store/index';
+import { resetStateUserapprovalmaster } from '../store/slices/userapprovalmasterSlice';
 
 let store;
 export const injectStore = (_store) => {
@@ -19,9 +20,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Modify the request config before sending the request
     // For example, you can add headers or authentication tokens
-    config.headers['Authorization'] = `${
-      store.getState().auth.data.token
-      }`;
+    config.headers['Authorization'] = `${store.getState().auth.data.token}`;
     if (config.data instanceof FormData) {
       config.headers['Content-Type'] = 'multipart/form-data';
       config.headers['Accept'] = '*/*';
@@ -77,6 +76,7 @@ axiosInstance.interceptors.response.use(
     } else if (error.response && error.response.status === 401) {
       erroHandler('Unathorized Access', 'error');
       store.dispatch(FlushUserData());
+      store.dispatch(resetStateUserapprovalmaster());
     }
     return Promise.reject(error);
   }
