@@ -14,7 +14,7 @@ const callNotification = (description, type) => {
 const initialState = {
   userapprovalmasters: [],
   userapprovalmasters_current_handler: [],
-  userapprovalmaster_request_chain:[],
+  userapprovalmaster_request_chain: [],
   userapprovalmaster_request_chain_loading: false,
   userapprovalmaster_approved: [],
   userapprovalmaster_loading: false,
@@ -73,8 +73,7 @@ export const fetchUserapprovalRequestChain = createAsyncThunk(
   async (approvalId) => {
     try {
       const url =
-        BACKEND_URL +
-        `/user-approvals/fetchRequestChain/${approvalId}`;
+        BACKEND_URL + `/user-approvals/fetchRequestChain/${approvalId}`;
       const response = await axiosInstance.get(url);
       return response.data;
     } catch (error) {
@@ -246,7 +245,10 @@ const userapprovalmasterSlice = createSlice({
       .addCase(createUserapprovalmasterAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.userapprovalmasters.push(action.payload);
-        callNotification('Your request has been successfully placed for approval', 'success');
+        callNotification(
+          'Your request has been successfully placed for approval',
+          'success'
+        );
       })
       .addCase(createUserapprovalmasterAsync.rejected, (state, action) => {
         state.loading = false;
@@ -278,6 +280,8 @@ const userapprovalmasterSlice = createSlice({
         if (index1 !== -1) {
           state.userapprovalmasters_current_handler[index1] =
             updatedUserapprovalmasterCurrentHandler;
+          // Deleting the item at index1
+          state.userapprovalmasters_current_handler.splice(index1, 1);
         }
 
         state.userapprovalmaster_approved_loading = false;

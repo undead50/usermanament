@@ -3,9 +3,9 @@ import { Table, Button, Modal, Form, Input, DatePicker, Space } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   createBranchAsync,
-    deleteBranchAsync,
-      fetchBranchsAsync,
-        updateBranchAsync,
+  deleteBranchAsync,
+  fetchBranchsAsync,
+  updateBranchAsync,
 } from '../../store/slices/branchSlice';
 // import { useNotification } from '../../hooks/index';
 
@@ -65,44 +65,33 @@ const BranchTable = () => {
   };
 
   const columns = [
-
-    
-
-{
-  title: 'id',
-    dataIndex: 'id',
+    {
+      title: 'id',
+      dataIndex: 'id',
       key: 'id',
-      },
+    },
 
-
-
-{
-  title: 'solId',
-    dataIndex: 'solId',
+    {
+      title: 'solId',
+      dataIndex: 'solId',
       key: 'solId',
-      },
+    },
 
-
-
-{
-  title: 'solDescription',
-    dataIndex: 'solDescription',
+    {
+      title: 'solDescription',
+      dataIndex: 'solDescription',
       key: 'solDescription',
-      },
+    },
 
-
-
-{
-  title: 'isActive',
-    dataIndex: 'isActive',
+    {
+      title: 'isActive',
+      dataIndex: 'isActive',
       key: 'isActive',
-      },
+    },
 
-
-
-{
-  title: 'Action',
-    key: 'action',
+    {
+      title: 'Action',
+      key: 'action',
       render: (_, record) => (
         <Space>
           <Button onClick={() => handleEdit(record)}>Update</Button>
@@ -112,57 +101,61 @@ const BranchTable = () => {
     },
   ];
 
-return (
-  <div>
-    <Button
-      type="primary"
-      onClick={() => handleAdd()}
-      style={{ marginBottom: '16px' }}
-    >
-      Add
-    </Button>
-    <Table loading={branch_loading} dataSource={dataSource} columns={columns} />
+  return (
+    <div>
+      <Button
+        type="primary"
+        onClick={() => handleAdd()}
+        style={{ marginBottom: '16px' }}
+      >
+        Add
+      </Button>
+      <Table
+        loading={branch_loading}
+        dataSource={dataSource}
+        columns={columns}
+      />
 
-    {/* Modal for adding/editing a record */}
-    <Modal
-      title={editMode ? 'Edit Record' : 'Add Record'}
-      open={isModalVisible}
-      onCancel={() => {
-        setIsModalVisible(false);
-        form.resetFields();
-      }}
-      footer={null}
-    >
-      <Form form={form} onFinish={onFinish}>
-        {/* Add form fields here based on your column fields */}
-        
-        {editMode && (
+      {/* Modal for adding/editing a record */}
+      <Modal
+        title={editMode ? 'Edit Record' : 'Add Record'}
+        open={isModalVisible}
+        onCancel={() => {
+          setIsModalVisible(false);
+          form.resetFields();
+        }}
+        footer={null}
+      >
+        <Form form={form} onFinish={onFinish}>
+          {/* Add form fields here based on your column fields */}
+
+          {editMode && (
             <Form.Item name="id" hidden={true}>
               <Input />
             </Form.Item>
           )}
-        
-        <Form.Item name="solId" label="solId">
-          <Input />
-        </Form.Item>
-        
-        <Form.Item name="solDescription" label="solDescription">
-          <Input />
-        </Form.Item>
-        
-        <Form.Item name="isActive" label="isActive">
-          <Input />
-        </Form.Item>
-        
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            {editMode ? 'Update' : 'Add'}
-          </Button>
-        </Form.Item>
-      </Form>
-    </Modal>
-  </div>
-);
+
+          <Form.Item name="solId" label="solId">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="solDescription" label="solDescription">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="isActive" label="isActive">
+            <Input />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              {editMode ? 'Update' : 'Add'}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
 };
 
 export default BranchTable;

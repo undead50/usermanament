@@ -5,19 +5,26 @@ function App() {
     <>
       <ConfigProvider
         theme={{
+          components: {
+            Menu: {
+              colorPrimary: '#FDB912',
+            },
+          },
           token: {
-            fontFamily: 'Poppins', // replace with your desired font,
-            fontSize: 12,
-            sizeStep: 3,
+            // fontFamily: 'Poppins', // replace with your desired font,
+            // fontSize: 12,
+            sizeStep: 4,
             sizeUnit: 2,
-            borderRadius: 4,
-            colorPrimary: '#0067b2',
-            colorInfo: '#0067b2',
-            colorSuccess: '#42b086',
-            borderRadiusXS: 16,
-            borderRadiusSM: 16,
-            borderRadius: 16,
-            borderRadiusLG: 16,
+            dropdownBg: 'white',
+            // borderRadius: 4,
+
+            // colorInfo: '#0067b2',
+            colorPrimary: '#920E13',
+            // colorSuccess: '#42b086',
+            // borderRadiusXS: 16,
+            // borderRadiusSM: 16,
+            // borderRadius: 16,
+            // borderRadiusLG: 16,
           },
         }}
       >

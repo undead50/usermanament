@@ -30,7 +30,7 @@ import { setUser, FlushUserData } from '../../store';
 import {
   fetchUserApprovalApproved,
   fetchUserapprovalmastersByCurrentHandler,
-  fetchUserapprovalRequestChain
+  fetchUserapprovalRequestChain,
 } from '../../store/slices/userapprovalmasterSlice';
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -80,7 +80,7 @@ const AdminLayout = () => {
         console.log(data);
         dispatch(fetchUserapprovalmastersByCurrentHandler(data.empData.id));
         dispatch(fetchUserApprovalApproved(data.empData.email));
-        dispatch(fetchUserapprovalRequestChain(data.empData.id))
+        dispatch(fetchUserapprovalRequestChain(data.empData.id));
         navigate('/');
         setVisible(false);
         callNotification('Login Success', 'success');
@@ -219,9 +219,9 @@ const AdminLayout = () => {
             margin: '16px 0',
           }}
         >
-          {/* <Breadcrumb.Item>Home</Breadcrumb.Item>
+          <Breadcrumb.Item>Home</Breadcrumb.Item>
           <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item> */}
+          <Breadcrumb.Item>App</Breadcrumb.Item>
         </Breadcrumb>
         <div
           style={{
