@@ -126,6 +126,11 @@ const UserApprovalApprovedTable = () => {
         </div>
       ),
     },
+    {
+      title: 'Created at',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+    },
 
     {
       title: 'Access Type',
@@ -164,12 +169,12 @@ const UserApprovalApprovedTable = () => {
       key: 'action',
       render: (_, record) => (
         <Space>
-          <Button onClick={() => handleEdit(record)}>
+          {/* <Button onClick={() => handleEdit(record)}>
             <EditOutlined />
           </Button>
           <Button onClick={() => handleDelete(record)}>
             <DeleteOutlined />
-          </Button>
+          </Button> */}
           <Button onClick={() => handleView(record)}>
             {' '}
             <EyeOutlined />

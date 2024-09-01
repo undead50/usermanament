@@ -15,6 +15,7 @@ import UserapprovalmasterTable from '../pages/UserApproval/index';
 import ProtectedRoute from '../components/ProtectedRoute';
 import Notfound from '../pages/System/404';
 import UserApprovalApprovedTable from '../pages/UserApproval/UserApprovalApproved';
+import UserApprovalChainTable from '../pages/UserApproval/UserApprovalChain';
 
 function MyRoutes() {
   return (
@@ -41,6 +42,7 @@ function MyRoutes() {
           <Route path="/request" element={<RequestTable />} />
           <Route path="/role" element={<RoleTable />} />
           <Route path="/service" element={<ServiceTable />} />
+          <Route path="/request-chain" element={<UserApprovalChainTable/>}/>
           <Route
             path="/user-approval-approved"
             element={<UserApprovalApprovedTable />}

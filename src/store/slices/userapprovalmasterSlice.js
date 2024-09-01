@@ -14,6 +14,8 @@ const callNotification = (description, type) => {
 const initialState = {
   userapprovalmasters: [],
   userapprovalmasters_current_handler: [],
+  userapprovalmaster_request_chain:[],
+  userapprovalmaster_request_chain_loading: false,
   userapprovalmaster_approved: [],
   userapprovalmaster_loading: false,
   userapprovalmasters_current_handler_loading: false,
@@ -58,6 +60,21 @@ export const fetchUserapprovalmastersById = createAsyncThunk(
   async (approvalId) => {
     try {
       const url = BACKEND_URL + `/user-approvals/${approvalId}`;
+      const response = await axiosInstance.get(url);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.error);
+    }
+  }
+);
+
+export const fetchUserapprovalRequestChain = createAsyncThunk(
+  'user-approvals/fetchUserapprovalRequestChain',
+  async (approvalId) => {
+    try {
+      const url =
+        BACKEND_URL +
+        `/user-approvals/fetchRequestChain/${approvalId}`;
       const response = await axiosInstance.get(url);
       return response.data;
     } catch (error) {
@@ -144,6 +161,18 @@ const userapprovalmasterSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUserapprovalRequestChain.pending, (state) => {
+        state.userapprovalmaster_request_chain_loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserapprovalRequestChain.fulfilled, (state, action) => {
+        state.userapprovalmaster_request_chain_loading = false;
+        state.userapprovalmaster_request_chain = action.payload;
+      })
+      .addCase(fetchUserapprovalRequestChain.rejected, (state, action) => {
+        state.userapprovalmaster_request_chain = false;
+        state.error = action.error.message;
+      })
       .addCase(fetchUserApprovalApproved.pending, (state) => {
         state.userapprovalmaster_approved_loading = true;
         state.error = null;
@@ -217,7 +246,7 @@ const userapprovalmasterSlice = createSlice({
       .addCase(createUserapprovalmasterAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.userapprovalmasters.push(action.payload);
-        callNotification('Operation Successfull', 'success');
+        callNotification('Your request has been successfully placed for approval', 'success');
       })
       .addCase(createUserapprovalmasterAsync.rejected, (state, action) => {
         state.loading = false;

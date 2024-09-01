@@ -13,41 +13,36 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   createUserapprovalmasterAsync,
   deleteUserapprovalmasterAsync,
+  fetchUserApprovalApproved,
   fetchUserapprovalmastersAsync,
   fetchUserapprovalmastersByCurrentHandler,
   fetchUserapprovalmastersById,
+  fetchUserapprovalRequestChain,
   updateUserapprovalmasterAsync,
 } from '../../store/slices/userapprovalmasterSlice';
 import UserRequestView from './model/UserRequestView';
 import { fetchApplicationsAsync } from '../../store/slices/applicationSlice';
-import { EyeOutlined, DeleteOutlined, EditOutlined,PlusCircleTwoTone } from '@ant-design/icons';
+import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
-import { useNavigate } from 'react-router-dom';
-
-
 
 // import { useNotification } from '../../hooks/index';
 
-const UserapprovalmasterTable = () => {
-
-
-  const navigate = useNavigate();
-
+const UserApprovalChainTable = () => {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formValues, setFormValues] = useState({});
   const [editMode, setEditMode] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [hasFetched, setHasFetched] = useState(false);
 
   // const { callNotification } = useNotification();
 
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.user);
 
+  const {employees} = useSelector((state)=> state.employee);
+
   const {
-    userapprovalmasters,
-    userapprovalmaster_approved,
+    userapprovalmaster_request_chain,
     loading,
     error,
     userapprovalmasters_current_handler,
@@ -87,18 +82,14 @@ const UserapprovalmasterTable = () => {
 
   useEffect(() => {
     // dispatch(fetchUserapprovalmastersAsync());
-    dispatch(fetchUserapprovalmastersByCurrentHandler(userInfo.empId));
+    // dispatch(fetchUserapprovalmastersByCurrentHandler(userInfo.empId));
+    // dispatch(fetchUserApprovalApproved(userInfo.email));
+    dispatch(fetchUserapprovalRequestChain(userInfo.empId))
     dispatch(fetchApplicationsAsync());
     dispatch(fetchEmployeesAsync());
-    console.log(userapprovalmasters);
   }, []);
 
-  // Run this effect only once after `userapprovalmasters_current_handler` is set
-  // useEffect(() => {
-  //   dispatch(fetchUserapprovalmastersByCurrentHandler(userInfo.empId));
-  // }, [visible]);
-
-  const dataSource = userapprovalmasters_current_handler;
+  const dataSource = userapprovalmaster_request_chain;
 
   const onFinish = (values) => {
     console.log(values);
@@ -142,6 +133,23 @@ const UserapprovalmasterTable = () => {
       dataIndex: 'createdAt',
       key: 'createdAt',
     },
+    {
+        title: 'Current Handler',
+        dataIndex: 'currentHandler',
+        key: 'currentHandler',
+        render: (text, record) => {
+            // Find the employee whose ID matches the currentHandler
+            const employee = employees.find(emp => emp.id === record.currentHandler);
+        
+            // Render the email if the employee is found, otherwise render a fallback text
+            return (
+              <div>
+                {employee ? employee.email : 'Process Completed'}
+              </div>
+            );
+          },
+      },
+
     {
       title: 'Access Type',
       dataIndex: 'accessType',
@@ -198,13 +206,10 @@ const UserapprovalmasterTable = () => {
     <div>
       <Button
         type="primary"
-        onClick={() => {
-          navigate('/create-approval')
-        }}
+        onClick={() => handleAdd()}
         style={{ marginBottom: '16px' }}
       >
-        Create Approval
-        <PlusCircleTwoTone />
+        Add
       </Button>
       <Table dataSource={dataSource} columns={columns} />
 
@@ -250,4 +255,4 @@ const UserapprovalmasterTable = () => {
   );
 };
 
-export default UserapprovalmasterTable;
+export default UserApprovalChainTable;

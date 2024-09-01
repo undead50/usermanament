@@ -18,9 +18,10 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import './index.css';
 import { fetchBranchsAsync } from '../../../store/slices/branchSlice';
-import { updateUserapprovalmasterAsync } from '../../../store/slices/userapprovalmasterSlice';
+import { updateUserapprovalmasterAsync,fetchUserapprovalmastersByCurrentHandler } from '../../../store/slices/userapprovalmasterSlice';
 import { fetchEmployeesAsync } from '../../../store/slices/employeeSlice';
 import { fetchApplicationsAsync } from '../../../store/slices/applicationSlice';
+
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -30,7 +31,7 @@ const UserRequestView = (props) => {
   const { approvalDetail, error, approvalDetail_loading } = useSelector(
     (state) => state.userapprovalmaster
   );
-
+  const [form] = Form.useForm();
   const { applications, loading } = useSelector((state) => state.application);
 
   const { userInfo } = useSelector((state) => state.user);
@@ -68,57 +69,68 @@ const UserRequestView = (props) => {
 
   // Handle form submission
   const handleFormSubmit = (values) => {
-    console.log('Form values:', values);
-    // Create a deep copy of the approvalDetail object
-    const updatedApprovalDetail = JSON.parse(JSON.stringify(approvalDetail));
+    Modal.confirm({
+      title: 'Confirm Submission',
+      content: `Are you sure you want to submit ${action} this request?`,
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk() {
+        console.log('Form values:', values);
+        
+        // Create a deep copy of the approvalDetail object
+        const updatedApprovalDetail = JSON.parse(JSON.stringify(approvalDetail));
+        
+        // Update the status based on action
+        if (action === 'approve') {
+          updatedApprovalDetail.status = 'APPROVED';
+          updatedApprovalDetail.approvedBy = updatedApprovalDetail.currentHandler;
+          updatedApprovalDetail.userApprovalHistories.push({
+            status: 'APPROVED',
+            remarks: values.comments,
+            delFlag: 'N',
+            commentedBy: updatedApprovalDetail.currentHandler,
+          });
+          updatedApprovalDetail.currentHandler = null;
+        } else if (action === 'recommend') {
+          updatedApprovalDetail.userApprovalHistories.push({
+            status: 'RECOMMENDED',
+            remarks: values.comments,
+            delFlag: 'N',
+            commentedBy: updatedApprovalDetail.currentHandler,
+          });
+          updatedApprovalDetail.currentHandler = values.approverId;
+          updatedApprovalDetail.status = 'RECOMMENDED';
+          
+          console.log(updatedApprovalDetail);
+        } else if (action === 'reject') {
+          updatedApprovalDetail.status = 'REJECTED';
+          updatedApprovalDetail.userApprovalHistories.push({
+            status: 'REJECTED',
+            remarks: values.comments,
+            delFlag: 'N',
+            commentedBy: updatedApprovalDetail.currentHandler,
+          });
+          updatedApprovalDetail.currentHandler = updatedApprovalDetail.requestedBy;
+        } else if (action === 'implemented') {
+          updatedApprovalDetail.status = 'IMPLEMENTED';
+          updatedApprovalDetail.userApprovalHistories.push({
+            status: 'IMPLEMENTED',
+            remarks: values.comments,
+            delFlag: 'N',
+            commentedBy: employees.find(emp => emp.email === userInfo.email)?.id || null,
+          });
+          updatedApprovalDetail.currentHandler = null;
+        }
+  
+        // Dispatch the action with the updated object
+        dispatch(updateUserapprovalmasterAsync(updatedApprovalDetail));
 
-    // Update the status based on action
-    if (action === 'approve') {
-      updatedApprovalDetail.status = 'APPROVED';
-      updatedApprovalDetail.approvedBy = updatedApprovalDetail.currentHandler;
-      updatedApprovalDetail.userApprovalHistories.push({
-        status: 'APPROVED',
-        remarks: values.comments,
-        delFlag: 'N',
-        commentedBy: updatedApprovalDetail.currentHandler,
-      });
-      updatedApprovalDetail.currentHandler = null;
-    } else if (action === 'recommend') {
-      updatedApprovalDetail.userApprovalHistories.push({
-        status: 'RECOMMENDED',
-        remarks: values.comments,
-        delFlag: 'N',
-        commentedBy: updatedApprovalDetail.currentHandler,
-      });
-      updatedApprovalDetail.currentHandler = values.approverId;
-      updatedApprovalDetail.status = 'RECOMMENDED';
-
-      console.log(updatedApprovalDetail);
-    } else if (action === 'reject') {
-      updatedApprovalDetail.status = 'REJECTED';
-      updatedApprovalDetail.userApprovalHistories.push({
-        status: 'REJECTED',
-        remarks: values.comments,
-        delFlag: 'N',
-        commentedBy: updatedApprovalDetail.currentHandler,
-      });
-      updatedApprovalDetail.currentHandler = updatedApprovalDetail.requestedBy;
-    } else if (action === 'implemented') {
-      updatedApprovalDetail.status = 'IMPLEMENTED';
-      updatedApprovalDetail.userApprovalHistories.push({
-        status: 'IMPLEMENTED',
-        remarks: values.comments,
-        delFlag: 'N',
-        commentedBy:
-          employees.find((emp) => emp.email === userInfo.email)?.id || null,
-      });
-      updatedApprovalDetail.currentHandler = null;
-    }
-
-    // Dispatch the action with the updated object
-    dispatch(updateUserapprovalmasterAsync(updatedApprovalDetail));
-    props.onCancel();
-    // Logic to handle the form submission based on the action
+        
+        // Optionally handle any additional logic after dispatch
+        form.resetFields();
+        props.onCancel();
+      },
+    });
   };
 
   return (
@@ -276,122 +288,125 @@ const UserRequestView = (props) => {
             </Card>
 
             {/* Radio buttons for actions */}
-            {approvalDetail.status !== 'REJECTED' &&
-              approvalDetail.status !== 'IMPLEMENTED' && (
-                <Radio.Group
-                  onChange={handleRadioChange}
-                  value={action}
-                  style={{ marginBottom: '24px' }}
-                >
-                  {approvalDetail.status === 'APPROVED' ? (
-                    <Radio value="implemented">
-                      <Tag color="blue" bordered={false}>
-                        Implemented
-                      </Tag>
-                    </Radio>
-                  ) : (
-                    <>
-                      <Radio value="recommend">
-                        <Tag color="blue" bordered={false}>
-                          Recommend
-                        </Tag>
-                      </Radio>
-                      <Radio value="approve">
-                        <Tag color="green" bordered={false}>
-                          Approve
-                        </Tag>
-                      </Radio>
-                    </>
-                  )}
+            {(approvalDetail.currentHandler === userInfo.empId || approvalDetail.currentHandler === null) && (
+  <>
+    {approvalDetail.status !== 'REJECTED' && approvalDetail.status !== 'IMPLEMENTED' && (
+      <Radio.Group
+        onChange={handleRadioChange}
+        value={action}
+        style={{ marginBottom: '24px' }}
+      >
+        {approvalDetail.status === 'APPROVED' ? (
+          <Radio value="implemented">
+            <Tag color="blue" bordered={false}>
+              Implemented
+            </Tag>
+          </Radio>
+        ) : (
+          <>
+            <Radio value="recommend">
+              <Tag color="blue" bordered={false}>
+                Recommend
+              </Tag>
+            </Radio>
+            <Radio value="approve">
+              <Tag color="green" bordered={false}>
+                Approve
+              </Tag>
+            </Radio>
+          </>
+        )}
 
-                  <Radio value="reject">
-                    <Tag color="red" bordered={false}>
-                      Reject
-                    </Tag>
-                  </Radio>
-                </Radio.Group>
-              )}
+        <Radio value="reject">
+          <Tag color="red" bordered={false}>
+            Reject
+          </Tag>
+        </Radio>
+      </Radio.Group>
+    )}
 
-            <Card
-              title={<Title level={5}>Approval</Title>}
-              style={{ marginBottom: '24px' }}
+    <Card
+      title={<Title level={5}>Approval</Title>}
+      style={{ marginBottom: '24px' }}
+    >
+      {formVisible && (
+        <Form form={form} onFinish={handleFormSubmit}>
+          {action === 'recommend' && (
+            <Form.Item
+              name="approverId"
+              label="Approver Address"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select an Approver address!',
+                },
+              ]}
             >
-              {formVisible && (
-                <Form onFinish={handleFormSubmit}>
-                  {action === 'recommend' && (
-                    <Form.Item
-                      name="approverId"
-                      label="Approver Address"
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Please select an Approver address!',
-                        },
-                      ]}
+              <Select
+                placeholder="Select an Approver"
+                style={{ width: '100%' }}
+                allowClear
+                showSearch
+                filterOption={(input, option) => {
+                  const fullLabel = option.props['data-label'].toLowerCase();
+                  return fullLabel.includes(input.toLowerCase());
+                }}
+                optionLabelProp="label" // Use the email as the label when an option is selected
+              >
+                {employees.map((emp) => {
+                  const optionLabel = `${emp.name} - ${
+                    branchs.find((b) => b.solId === emp.branch)?.solDescription || 'Unknown Branch'
+                  } - ${emp.email}`;
+                  return (
+                    <Option
+                      key={emp.id}
+                      value={emp.id} // Store the email as the selected value
+                      label={emp.email} // Display email when selected
+                      data-label={optionLabel} // For filtering purposes
                     >
-                      <Select
-                        placeholder="Select an Approver"
-                        style={{ width: '100%' }}
-                        allowClear
-                        showSearch
-                        filterOption={(input, option) => {
-                          const fullLabel =
-                            option.props['data-label'].toLowerCase();
-                          return fullLabel.includes(input.toLowerCase());
-                        }}
-                        optionLabelProp="label" // Use the email as the label when an option is selected
-                      >
-                        {employees.map((emp) => {
-                          const optionLabel = `${emp.name} - ${
-                            branchs.find((b) => b.solId === emp.branch)
-                              ?.solDescription || 'Unknown Branch'
-                          } - ${emp.email}`;
-                          return (
-                            <Option
-                              key={emp.id}
-                              value={emp.id} // Store the email as the selected value
-                              label={emp.email} // Display email when selected
-                              data-label={optionLabel} // For filtering purposes
-                            >
-                              <div>
-                                <strong>{emp.name}</strong>
-                                <br />
-                                <span style={{ color: '#888' }}>
-                                  {branchs.find((b) => b.solId === emp.branch)
-                                    ?.solDescription || 'Unknown Branch'}
-                                </span>
-                                <br />
-                                <span style={{ color: '#555' }}>
-                                  {emp.email}
-                                </span>
-                              </div>
-                            </Option>
-                          );
-                        })}
-                      </Select>
-                    </Form.Item>
-                  )}
+                      <div>
+                        <strong>{emp.name}</strong>
+                        <br />
+                        <span style={{ color: '#888' }}>
+                          {branchs.find((b) => b.solId === emp.branch)?.solDescription || 'Unknown Branch'}
+                        </span>
+                        <br />
+                        <span style={{ color: '#555' }}>
+                          {emp.email}
+                        </span>
+                      </div>
+                    </Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          )}
 
-                  <Form.Item
-                    name="comments"
-                    label="Comments"
-                    rules={[
-                      {
-                        required: true,
-                        message: 'Please input your comments!',
-                      },
-                    ]}
-                  >
-                    <TextArea rows={4} />
-                  </Form.Item>
-                  <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                      Submit
-                    </Button>
-                  </Form.Item>
-                </Form>
-              )}
-            </Card>
+          <Form.Item
+            name="comments"
+            label="Comments"
+            rules={[
+              {
+                required: true,
+                message: 'Please input your comments!',
+              },
+            ]}
+          >
+            <TextArea rows={4} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
+    </Card>
+  </>
+)}
+
+            
+           
           </>
         ) : (
           <Text>Loading...</Text>

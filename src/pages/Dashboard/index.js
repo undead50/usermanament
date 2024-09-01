@@ -24,7 +24,7 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   // const { data } = useSelector((state) => state.auth);
 
-  const { userapprovalmasters_current_handler, userapprovalmaster_approved } =
+  const { userapprovalmasters_current_handler, userapprovalmaster_approved,userapprovalmaster_request_chain } =
     useSelector((state) => state.userapprovalmaster);
 
   const { userInfo } = useSelector((state) => state.user);
@@ -115,13 +115,13 @@ const Dashboard = () => {
           <Card
             style={{ backgroundColor: '#B2D7ED' }}
             className="hoverable-card"
-            onClick={() => handleClick('/myrequest')}
+            onClick={() => handleClick('/request-chain')}
           >
             <Statistic
               title="My Request Chain"
               prefix={<FolderOpenOutlined style={{ marginRight: 8 }} />}
               style={{ fontWeight: 'bold' }}
-              // value={my_changes.length}
+              value={userapprovalmaster_request_chain.length}
               formatter={formatter}
             />
           </Card>

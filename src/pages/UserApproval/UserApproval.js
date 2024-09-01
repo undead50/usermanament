@@ -29,7 +29,7 @@ import {
   fetchRequestsAsync,
   resetStateRequest,
 } from '../../store/slices/requestSlice';
-import { MinusCircleOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined,FileAddTwoTone } from '@ant-design/icons';
 import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
 import {
   createUserapprovalmasterAsync,
@@ -53,11 +53,11 @@ const UserApprovalForm = () => {
 
   const { userInfo } = useSelector((state) => state.user);
 
-  const { applications, loading, error } = useSelector(
+  const { applications, error } = useSelector(
     (state) => state.application
   );
 
-  const { upr_data } = useSelector((state) => state.userapprovalmaster);
+  const { upr_data,loading } = useSelector((state) => state.userapprovalmaster);
 
   const { requests } = useSelector((state) => state.request);
 
@@ -181,7 +181,11 @@ const UserApprovalForm = () => {
         };
         dispatch(createUserapprovalmasterAsync(payload));
 
+     
+
         console.log('Form values:', values);
+        form.resetFields();
+        setDataSource([]);
         //message.success('User approval submitted successfully!');
       },
     });
@@ -705,7 +709,7 @@ const UserApprovalForm = () => {
                 onClick={handleAdd}
                 style={{ marginBottom: 16 }}
               >
-                Add Role
+                Add Role <FileAddTwoTone />
               </Button>
               <Table
                 columns={columns}
@@ -843,7 +847,7 @@ const UserApprovalForm = () => {
         <br />
         <div>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loading}>
               Submit
             </Button>
           </Form.Item>
