@@ -158,6 +158,7 @@ const UserApprovalForm = () => {
           fromDate: values.fromDate,
           toDate: values.toDate,
           requestedBy: values.employeeName,
+          cbsUserName: values.finacleId,
           status: 'REQUESTED',
           recommendedBy: null,
           approvedBy: null,
@@ -168,6 +169,7 @@ const UserApprovalForm = () => {
             roleTypeId: item.roleType,
             serviceType: item.serviceType,
             requestType: null ? item.requestType == '' : item.requestType,
+            exsistingServiceType:null ? item.ExsistingServiceType == '':item.ExsistingServiceType,
             delFlag: 'N',
           })),
           userApprovalHistories: [

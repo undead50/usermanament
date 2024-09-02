@@ -219,7 +219,7 @@ const AdminLayout = () => {
             margin: '16px 0',
           }}
         >
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
+          <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
           <Breadcrumb.Item>List</Breadcrumb.Item>
           <Breadcrumb.Item>App</Breadcrumb.Item>
         </Breadcrumb>
@@ -293,7 +293,7 @@ const AdminLayout = () => {
                       },
                     ]}
                   >
-                    <Input placeholder="Username" />
+                    <Input placeholder="Domain Username" />
                   </Form.Item>
 
                   <Form.Item
@@ -305,7 +305,7 @@ const AdminLayout = () => {
                       },
                     ]}
                   >
-                    <Input.Password placeholder="Password" />
+                    <Input.Password placeholder="Domain Password" />
                   </Form.Item>
 
                   <Form.Item>

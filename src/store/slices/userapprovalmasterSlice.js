@@ -124,6 +124,20 @@ export const createUserapprovalmasterAsync = createAsyncThunk(
   }
 );
 
+export const saveToCbs = createAsyncThunk(
+  'userapprovalmaster/saveToCbs',
+  async (userapprovalmasterData) => {
+    try {
+      const url = BACKEND_URL + '/user-approvals/saveToCbs';
+      const response = await axiosInstance.post(url, userapprovalmasterData);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.error);
+    }
+  }
+);
+
 export const updateUserapprovalmasterAsync = createAsyncThunk(
   'userapprovalmaster/updateUserapprovalmaster',
   async (userapprovalmasterData) => {

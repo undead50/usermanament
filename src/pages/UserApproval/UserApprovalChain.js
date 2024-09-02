@@ -204,13 +204,13 @@ const UserApprovalChainTable = () => {
 
   return (
     <div>
-      <Button
+      {/* <Button
         type="primary"
         onClick={() => handleAdd()}
         style={{ marginBottom: '16px' }}
       >
         Add
-      </Button>
+      </Button> */}
       <Table dataSource={dataSource} columns={columns} />
 
       {/* Modal for adding/editing a record */}

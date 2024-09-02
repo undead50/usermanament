@@ -18,7 +18,7 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import './index.css';
 import { fetchBranchsAsync } from '../../../store/slices/branchSlice';
-import { updateUserapprovalmasterAsync,fetchUserapprovalmastersByCurrentHandler } from '../../../store/slices/userapprovalmasterSlice';
+import { updateUserapprovalmasterAsync,fetchUserapprovalmastersByCurrentHandler, saveToCbs } from '../../../store/slices/userapprovalmasterSlice';
 import { fetchEmployeesAsync } from '../../../store/slices/employeeSlice';
 import { fetchApplicationsAsync } from '../../../store/slices/applicationSlice';
 
@@ -35,6 +35,8 @@ const UserRequestView = (props) => {
   const { applications, loading } = useSelector((state) => state.application);
 
   const { userInfo } = useSelector((state) => state.user);
+
+  const { roles} = useSelector((state)=> state.role);
 
   const dispatch = useDispatch();
 
@@ -120,8 +122,23 @@ const UserRequestView = (props) => {
             commentedBy: employees.find(emp => emp.email === userInfo.email)?.id || null,
           });
           updatedApprovalDetail.currentHandler = null;
+
+          if(updatedApprovalDetail.accessType === 'T'){
+            const updateToCbs = updatedApprovalDetail.applicationRoleRequests.map((request) => {
+              return {
+                  "exsistingServiceType": request.exsistingServiceType,
+                  "fromDate": updatedApprovalDetail.fromDate,
+                  "roleTypeId": roles.find((role) => role.id === request.roleTypeId)?.role,
+                  "serviceType": request.serviceType,
+                  "toDate": updatedApprovalDetail.toDate,
+                  "cbsId": updatedApprovalDetail.cbsUserName
+              };
+          });
+          dispatch(saveToCbs(updateToCbs))
+          }
+
+         
         }
-  
         // Dispatch the action with the updated object
         dispatch(updateUserapprovalmasterAsync(updatedApprovalDetail));
 
@@ -288,7 +305,7 @@ const UserRequestView = (props) => {
             </Card>
 
             {/* Radio buttons for actions */}
-            {(approvalDetail.currentHandler === userInfo.empId || approvalDetail.currentHandler === null) && (
+            {( approvalDetail.currentHandler === userInfo.empId || approvalDetail.currentHandler === null && approvalDetail.requestedBy !== userInfo.empId ) && (
   <>
     {approvalDetail.status !== 'REJECTED' && approvalDetail.status !== 'IMPLEMENTED' && (
       <Radio.Group

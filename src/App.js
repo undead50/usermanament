@@ -8,6 +8,7 @@ function App() {
           components: {
             Menu: {
               colorPrimary: '#FDB912',
+              // colorPrimaryBgHover:'green'
             },
           },
           token: {

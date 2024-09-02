@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Menu } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import './MenuBar.css'
 
 const { SubMenu } = Menu;
 
@@ -13,7 +14,7 @@ const items = [
     children: [
       {
         key: 'g1',
-        label: 'Item 1',
+        label: 'User Approval',
         type: 'group',
         children: [
           {
@@ -24,23 +25,17 @@ const items = [
             key: '/create-approval',
             label: 'Request Approval',
           },
-        ],
-      },
-      {
-        key: 'g2',
-        label: 'Settings',
-        type: 'group',
-        children: [
           {
-            key: '3',
-            label: 'Option 3',
+            key: '/approval-index',
+            label: 'Pending',
           },
           {
-            key: '4',
-            label: 'Option 4',
+            key: 'request-chain',
+            label: 'Request Chain',
           },
+         
         ],
-      },
+      }
     ],
   },
   {
@@ -101,6 +96,7 @@ function MenuBar() {
   return (
     <Menu
       onClick={handleClick}
+      theme="light"
       style={{
         width: 1000,
         backgroundColor: '#8F0000', // Red background
@@ -110,22 +106,7 @@ function MenuBar() {
       mode="horizontal"
       items={items}
     >
-      <style>
-        {`
-          .ant-menu-item {
-            color: white !important; // White text color for items
-          }
-          .ant-menu-item:hover {
-            background-color: yellow !important; // Darker red on hover
-          }
-          .ant-menu-submenu-title {
-            color: white !important; // White text color for submenu titles
-          }
-          .ant-menu-submenu-title:hover {
-            background-color: yellow !important; // Darker red on hover
-          }
-        `}
-      </style>
+     
     </Menu>
   );
 }

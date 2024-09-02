@@ -23,6 +23,7 @@ import UserRequestView from './model/UserRequestView';
 import { fetchApplicationsAsync } from '../../store/slices/applicationSlice';
 import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { fetchEmployeesAsync } from '../../store/slices/employeeSlice';
+import { fetchRolesAsync } from '../../store/slices/roleSlice';
 
 // import { useNotification } from '../../hooks/index';
 
@@ -83,6 +84,7 @@ const UserApprovalApprovedTable = () => {
     // dispatch(fetchUserapprovalmastersByCurrentHandler(userInfo.empId));
     dispatch(fetchUserApprovalApproved(userInfo.email));
     dispatch(fetchApplicationsAsync());
+    dispatch(fetchRolesAsync())
     dispatch(fetchEmployeesAsync());
     console.log(userapprovalmasters);
   }, []);
@@ -186,13 +188,13 @@ const UserApprovalApprovedTable = () => {
 
   return (
     <div>
-      <Button
+      {/* <Button
         type="primary"
         onClick={() => handleAdd()}
         style={{ marginBottom: '16px' }}
       >
         Add
-      </Button>
+      </Button> */}
       <Table dataSource={dataSource} columns={columns} />
 
       {/* Modal for adding/editing a record */}
