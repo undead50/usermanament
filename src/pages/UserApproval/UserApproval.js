@@ -159,6 +159,7 @@ const UserApprovalForm = () => {
           toDate: values.toDate,
           requestedBy: values.employeeName,
           cbsUserName: values.finacleId,
+          branchId:values.employeeSolId,
           status: 'REQUESTED',
           recommendedBy: null,
           approvedBy: null,
@@ -167,7 +168,7 @@ const UserApprovalForm = () => {
           applicationRoleRequests: dataSource.map((item) => ({
             applicationId: item.application,
             roleTypeId: item.roleType,
-            serviceType: item.serviceType,
+            serviceType: null ? item.serviceType == '': item.serviceType,
             requestType: null ? item.requestType == '' : item.requestType,
             exsistingServiceType:null ? item.ExsistingServiceType == '':item.ExsistingServiceType,
             delFlag: 'N',

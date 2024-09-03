@@ -134,7 +134,15 @@ const UserRequestView = (props) => {
                   "cbsId": updatedApprovalDetail.cbsUserName
               };
           });
-          dispatch(saveToCbs(updateToCbs))
+          const applicationName = "Finacle";
+          const application = applications.find(app => app.applicationName === applicationName);
+          if (
+            application.id === updatedApprovalDetail.applicationRoleRequests[0]?.applicationId &&
+            updatedApprovalDetail.applicationRoleRequests[0]?.requestType === null
+          ) {
+            dispatch(saveToCbs(updateToCbs));
+          }
+          
           }
 
          
